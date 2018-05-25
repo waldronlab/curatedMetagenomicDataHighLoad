@@ -60,13 +60,13 @@ RUN unzip bowtie2-2.3.4.1-linux-x86_64.zip
 RUN wget https://download.asperasoft.com/download/sw/cli/3.7.7/aspera-cli-3.7.7.608.927cce8-linux-64-release.sh
 RUN bash aspera-cli-3.7.7.608.927cce8-linux-64-release.sh
 ENV PATH="/root/.aspera/cli/bin:${PATH}"
-RUN mkdir -p /tools/aspera/connect/bin/
-RUN cp /root/.aspera/cli/bin/* /tools/aspera/connect/bin/.
+#RUN mkdir -p /tools/aspera/connect/bin/
+#RUN cp -R /root/.aspera/cli /tools/aspera/connect
 
-ENV pa="/root/.aspera/cli/bin"
+ENV pa="/root/.aspera/cli/"
 ENV pm="/tools/metaphlan2/metaphlan2.py"
-ENV pc="/databases/chocophlan/"
-ENV pp="/databases/uniref/"
+ENV pc="/databases/chocophlan/humann2_database_downloads/chocophlan/"
+ENV pp="/databases/chocophlan/humann2_database_downloads/uniref/"
 ENV pmdb="/tools/metaphlan2/db_v20/mpa_v20_m200.pkl" 
 ENV ncores="16"
 

@@ -9,12 +9,14 @@
 # python
 
 ### before running this script, set these paths and variables
-pa=/tools/aspera/connect/ #aspera path (like /tools/aspera/connect/)
-pm=/tools/metaphlan2/metaphlan2.py #metaphlan2 path (like /tools/metaphlan2/bin/metaphlan2.py)
-pc=/databases/chocophlan # chocophlan database (nucleotide-database for humann2, like /databases/chocophlan
-pp=/databases/uniref/ # uniref database (protein-database for humann2, like /databases/uniref)
-pmdb=/tools/metaphlan2/db_v20/mpa_v20_m200.pkl #metaphlan2 database (like /tools/metaphlan2/db_v20/mpa_v20_m200.pkl)
-ncores=16 #number of cores
+#pa=/tools/aspera/connect/ #aspera path (like /tools/aspera/connect/)
+#pm=/tools/metaphlan2/metaphlan2.py #metaphlan2 path (like /tools/metaphlan2/bin/metaphlan2.py)
+#pc=/databases/chocophlan # chocophlan database (nucleotide-database for humann2, like /databases/chocophlan
+#pp=/databases/uniref/ # uniref database (protein-database for humann2, like /databases/uniref)
+#pmdb=/tools/metaphlan2/db_v20/mpa_v20_m200.pkl #metaphlan2 database (like /tools/metaphlan2/db_v20/mpa_v20_m200.pkl)
+#ncores=16 #number of cores
+
+# test - bash curatedMetagenomicData_pipeline.sh MV_FEI4_t1Q14 "SRR4052038"
 
 sample=$1
 runs=$2
