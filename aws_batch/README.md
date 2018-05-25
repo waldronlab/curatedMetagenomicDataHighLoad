@@ -40,6 +40,14 @@ case you are responsible for setting up and scaling the instances in
 an Amazon ECS cluster that AWS Batch will create for you.
 
 
+# Custom AMI
+
+The AMI used by default in ECS (batch) is too small (22GB disk). Follow instructions here:
+
+https://github.com/nextflow-io/nextflow/blob/master/docs/awscloud.rst#custom-ami
+
+
+
 
 # Examples
 
