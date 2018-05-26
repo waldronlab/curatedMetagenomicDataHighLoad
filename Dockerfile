@@ -48,7 +48,7 @@ RUN humann2_databases --download uniref DEMO_diamond humann2_database_downloads
 ## Install metaphlan
 WORKDIR /tools
 RUN hg clone https://bitbucket.org/biobakery/metaphlan2
-ENV PATH="/tools/metaphla2:${PATH}"
+ENV PATH="/tools/metaphlan2:/tools/metaphlan/utils:${PATH}"
 ENV mpa_dir="/tools/metaphlan2"
 
 ## Install BowTie2
@@ -66,9 +66,12 @@ ENV PATH="/root/.aspera/cli/bin:${PATH}"
 ENV pa="/root/.aspera/cli/"
 ENV pm="/tools/metaphlan2/metaphlan2.py"
 ENV pc="/databases/chocophlan/humann2_database_downloads/chocophlan/"
-ENV pp="/databases/chocophlan/humann2_database_downloads/uniref/"
+ENV pp="/databases/uniref/humann2_database_downloads/uniref/"
 ENV pmdb="/tools/metaphlan2/db_v20/mpa_v20_m200.pkl" 
 ENV ncores="16"
 
 WORKDIR /
-RUN git clone https://github.com/waldronlab/curatedMetagenomicDataHighLoad.git
+#RUN git clone https://github.com/waldronlab/curatedMetagenomicDataHighLoad.git
+RUN git clone https://github.com/stevetsa/curatedMetagenomicDataHighLoad.git
+
+RUN apt-get install -y nano
