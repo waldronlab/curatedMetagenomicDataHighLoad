@@ -7,23 +7,11 @@ RUN apt-get update && apt-get install --yes \
  autoconf \
  libtool \
  pkg-config \
-# gcc-multilib \
-# apt-utils \
-# zlib1g-dev \
  wget \
  git \
  python-pip \
  python-dev \
  python-setuptools \
-# libbz2-dev \
-# liblzma-dev \
-# libz-dev \
-# ncurses-dev \
-# zlib1g-dev \
-# libxml2-dev \
-# python-numpy \
-# python-scipy \
-# python-matplotlib \
  mercurial \
  perl \
  unzip \
@@ -51,11 +39,7 @@ WORKDIR /databases/uniref/
 RUN humann2_databases --download uniref DEMO_diamond humann2_database_downloads
 
 ## Install metaphlan
-#WORKDIR /tools
-#RUN hg clone https://bitbucket.org/biobakery/metaphlan2
-#ENV PATH="/tools/metaphlan2:/tools/metaphlan/utils:${PATH}"
-#ENV mpa_dir="/tools/metaphlan2"
-
+WORKDIR /tools
 # Install some pre-reqs needed
 RUN wget -O /tools/hclust2.zip https://bitbucket.org/nsegata/hclust2/get/tip.zip
 RUN unzip -d /tools/hclust2 /tools/hclust2.zip
@@ -71,7 +55,6 @@ RUN wget -O /tools/metaphlan2.zip https://bitbucket.org/biobakery/metaphlan2/get
 RUN unzip -d /tools/ /tools/metaphlan2.zip
 WORKDIR /tools
 RUN mv biobakery-metaphlan2* metaphlan2
-
 ENV PATH $PATH:/tools/metaphlan2/:/tools/metaphlan2/utils
 ENV MPA_DIR /tools/metaphlan2/
 
