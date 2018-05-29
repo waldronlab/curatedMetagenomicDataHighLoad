@@ -1,29 +1,34 @@
-FROM ubuntu:16.04
+FROM ubuntu:latest
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 MAINTAINER Steve Tsang <mylagimail2004@yahoo.com>
 
 RUN apt-get update && apt-get install --yes \
  build-essential \
- gcc-multilib \
- apt-utils \
- zlib1g-dev \
+ autoconf \
+ libtool \
+ pkg-config \
+# gcc-multilib \
+# apt-utils \
+# zlib1g-dev \
  wget \
  git \
  python-pip \
  python-dev \
- libbz2-dev \
- liblzma-dev \
- apt-utils \
- libz-dev \
- ncurses-dev \
- zlib1g-dev \
- libxml2-dev \
- python-numpy \
- python-scipy \
- python-matplotlib \
+ python-setuptools \
+# libbz2-dev \
+# liblzma-dev \
+# libz-dev \
+# ncurses-dev \
+# zlib1g-dev \
+# libxml2-dev \
+# python-numpy \
+# python-scipy \
+# python-matplotlib \
  mercurial \
  perl \
- unzip
+ unzip \
+ nano \
+ bzip2
 
 RUN mkdir /tools
 ## install SRA tool kit
@@ -46,10 +51,39 @@ WORKDIR /databases/uniref/
 RUN humann2_databases --download uniref DEMO_diamond humann2_database_downloads
 
 ## Install metaphlan
+#WORKDIR /tools
+#RUN hg clone https://bitbucket.org/biobakery/metaphlan2
+#ENV PATH="/tools/metaphlan2:/tools/metaphlan/utils:${PATH}"
+#ENV mpa_dir="/tools/metaphlan2"
+
+# Install some pre-reqs needed
+RUN wget -O /tools/hclust2.zip https://bitbucket.org/nsegata/hclust2/get/tip.zip
+RUN unzip -d /tools/hclust2 /tools/hclust2.zip
+RUN mv /tools/hclust2/nsegata-hclust2-*/* /tools/hclust2/
+RUN rm -rf /tools/hclust2/nsegata-hclust2-*
+ENV PATH $PATH:/tools/hclust2
+
+# These have to be done sequentially, as there's a current problem with the dependency order resolution
+RUN pip install numpy
+RUN pip install matplotlib scipy biom-format h5py
+
+RUN wget -O /tools/metaphlan2.zip https://bitbucket.org/biobakery/metaphlan2/get/default.zip
+RUN unzip -d /tools/ /tools/metaphlan2.zip
 WORKDIR /tools
-RUN hg clone https://bitbucket.org/biobakery/metaphlan2
-ENV PATH="/tools/metaphlan2:/tools/metaphlan/utils:${PATH}"
-ENV mpa_dir="/tools/metaphlan2"
+RUN mv biobakery-metaphlan2* metaphlan2
+
+ENV PATH $PATH:/tools/metaphlan2/:/tools/metaphlan2/utils
+ENV MPA_DIR /tools/metaphlan2/
+
+RUN mkdir -p /tools/metaphlan2/db_v20/
+#RUN wget -O /tools/metaphlan2/db_v20/mpa_v20_m200_marker_info.txt.bz2 https://bitbucket.org/biobakery/metaphlan2/downloads/mpa_v20_m200_marker_info.txt.bz2
+#RUN bzip2 -d /tools/metaphlan2/db_v20/mpa_v20_m200_marker_info.txt.bz2
+
+WORKDIR /tools/metaphlan2/db_v20
+RUN wget https://bitbucket.org/biobakery/metaphlan2/downloads/mpa_v20_m200.tar
+RUN tar xvf mpa_v20_m200.tar
+RUN bzip2 -d mpa_v20_m200.fna.bz2
+RUN bowtie2-build mpa_v20_m200.fna mpa_v20_m200
 
 ## Install BowTie2
 WORKDIR /tools
@@ -60,18 +94,7 @@ RUN unzip bowtie2-2.3.4.1-linux-x86_64.zip
 RUN wget https://download.asperasoft.com/download/sw/cli/3.7.7/aspera-cli-3.7.7.608.927cce8-linux-64-release.sh
 RUN bash aspera-cli-3.7.7.608.927cce8-linux-64-release.sh
 ENV PATH="/root/.aspera/cli/bin:${PATH}"
-#RUN mkdir -p /tools/aspera/connect/bin/
-#RUN cp -R /root/.aspera/cli /tools/aspera/connect
-
-ENV pa="/root/.aspera/cli/"
-ENV pm="/tools/metaphlan2/metaphlan2.py"
-ENV pc="/databases/chocophlan/humann2_database_downloads/chocophlan/"
-ENV pp="/databases/uniref/humann2_database_downloads/uniref/"
-ENV pmdb="/tools/metaphlan2/db_v20/mpa_v20_m200.pkl" 
-ENV ncores="16"
 
 WORKDIR /
 #RUN git clone https://github.com/waldronlab/curatedMetagenomicDataHighLoad.git
 RUN git clone https://github.com/stevetsa/curatedMetagenomicDataHighLoad.git
-
-RUN apt-get install -y nano
