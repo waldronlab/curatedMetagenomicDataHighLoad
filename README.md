@@ -24,3 +24,15 @@ The scripts in this directory allow the user to reproduce the entire process of 
 * Follow the same procedure if you want to process your own dataset.
 
 * When done, your output profile files are properly organized and ready to be [included](https://github.com/waldronlab/curatedMetagenomicData/wiki/The-curatedMetagenomicData-pipelines) in the *curatedMetagenomicData* package.
+
+* To run the [Docker container](https://hub.docker.com/r/stevetsa/curatedmetagenomicdatahighload/)  
+  This container is automatically build from the Dockerfile in [GitHub](https://github.com/stevetsa/curatedMetagenomicDataHighLoad) 
+  ```
+  #sudo apt-get install -y docker.io #install Docker if needed
+  docker pull stevetsa/curatedmetagenomicdatahighload
+  docker run -it stevetsa/curatedmetagenomicdatahighload
+  ## mount the current directory in the container for debugging
+  #docker run -v `pwd`:`pwd` -w `pwd` -i -t stevetsa/curatedmetagenomicdatahighload
+  ## once in container, set up databases (line 19-40 in [script](https://github.com/stevetsa/curatedMetagenomicDataHighLoad/blob/master/curatedMetagenomicData_pipeline.sh)) then run
+  bash curatedMetagenomicData_pipeline.sh MV_FEI4_t1Q14 "SRR4052038"
+  ```
