@@ -82,3 +82,6 @@ ENV PATH="/root/.aspera/cli/bin:${PATH}"
 WORKDIR /
 #RUN git clone https://github.com/waldronlab/curatedMetagenomicDataHighLoad.git
 RUN git clone https://github.com/stevetsa/curatedMetagenomicDataHighLoad.git
+
+RUN pip install awscli --upgrade --user
+ENV PATH="~/.local/bin:${PATH}"
