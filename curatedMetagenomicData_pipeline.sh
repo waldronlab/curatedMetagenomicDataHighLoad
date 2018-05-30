@@ -1,12 +1,14 @@
 #!/bin/bash
 
 ### usage: bash curatedMetagenomicData_pipeline.sh sample_name "SRRxxyxyxx;SRRyyxxyyx"
+### bash curatedMetagenomicData_pipeline.sh MV_FEI4_t1Q14 "SRR4052038"
 
 ### before running this script, be sure that these tools are in your path
 # fastq-dump
 # humann2
 # metaphlan2
 # python
+# run setup.sh to download/build the databases needed
 
 ### before running this script, set these paths and variables
 pa=/root/.aspera/cli/ #aspera path (like /tools/aspera/connect/)
@@ -44,8 +46,7 @@ mkdir -p ${sample}/humann2
 humann2 --input ${sample}/reads/${sample}.fastq --output ${sample}/humann2 --nucleotide-database ${pc} --protein-database ${pp} --threads=${ncores}
 humann2_renorm_table --input ${sample}/humann2/${sample}_genefamilies.tsv --output ${sample}/humann2/${sample}_genefamilies_relab.tsv --units relab
 humann2_renorm_table --input ${sample}/humann2/${sample}_pathabundance.tsv --output ${sample}/humann2/${sample}_pathabundance_relab.tsv --units relab
-python run_markers2.py --input_dir ${sample}/humann2/${sample}_humann2_temp/ --bt2_ext _metaphlan_bowtie2.txt --metaphlan_path ${pm} --metaphlan_db ${pmdb} --output_dir ${sample}/huma
-nn2 --nprocs ${ncores}
+python run_markers2.py --input_dir ${sample}/humann2/${sample}_humann2_temp/ --bt2_ext _metaphlan_bowtie2.txt --metaphlan_path ${pm} --metaphlan_db ${pmdb} --output_dir ${sample}/humann2 --nprocs ${ncores}
 
 mkdir genefamilies; mv ${sample}/humann2/${sample}_genefamilies.tsv genefamilies/${sample}.tsv;
 mkdir genefamilies_relab; mv ${sample}/humann2/${sample}_genefamilies_relab.tsv genefamilies_relab/${sample}.tsv;
