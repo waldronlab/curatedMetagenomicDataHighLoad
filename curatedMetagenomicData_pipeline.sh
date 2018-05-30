@@ -17,11 +17,11 @@ pmdb=/tools/metaphlan2/db_v20/mpa_v20_m200_marker_info.txt #metaphlan2 database 
 ncores=16 #number of cores
 
 #bowtie2-build metaphlan2/markers.fasta metaphlan2/db_v21/mpa_v21_m200
-cd /tools/metaphlan2/db_v20
-wget https://bitbucket.org/biobakery/metaphlan2/downloads/mpa_v20_m200.tar
-tar xvf mpa_v20_m200.tar
-bzip2 -d mpa_v20_m200.fna.bz2
-bowtie2-build mpa_v20_m200.fna mpa_v20_m200
+#cd /tools/metaphlan2/db_v20
+#wget https://bitbucket.org/biobakery/metaphlan2/downloads/mpa_v20_m200.tar
+#tar xvf mpa_v20_m200.tar
+#bzip2 -d mpa_v20_m200.fna.bz2
+#bowtie2-build mpa_v20_m200.fna mpa_v20_m200
 
 # test - bash curatedMetagenomicData_pipeline.sh MV_FEI4_t1Q14 "SRR4052038"
 
@@ -37,8 +37,7 @@ while [ "$runs" ] ; do
         shortyone=$(echo "$iter" | cut -c1-3)
         shortytwo=$(echo "$iter" | cut -c1-6)
 	echo 'Starting downloading run '${iter}
-        ${pa}bin/ascp -T -i ${pa}etc/asperaweb_id_dsa.openssh anonftp@ftp.ncbi.nlm.nih.gov:/sra/sra-instant/reads/ByRun/sra/${shortyone}/${shortytwo}/${iter}/${iter}.sra ${sample}/rea
-ds/
+        ${pa}bin/ascp -T -i ${pa}etc/asperaweb_id_dsa.openssh anonftp@ftp.ncbi.nlm.nih.gov:/sra/sra-instant/reads/ByRun/sra/${shortyone}/${shortytwo}/${iter}/${iter}.sra ${sample}/reads/
 	echo 'Dumping run '${iter}
         fastq-dump --split-files ${sample}/reads/${iter}.sra --outdir ${sample}/reads/
         [ "$runs" = "$iter" ] && \
