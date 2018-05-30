@@ -13,33 +13,8 @@ pa=/root/.aspera/cli/ #aspera path (like /tools/aspera/connect/)
 pm=/tools/metaphlan2/metaphlan2.py #metaphlan2 path (like /tools/metaphlan2/bin/metaphlan2.py)
 pc=/databases/chocophlan/humann2_database_downloads/chocophlan/ # chocophlan database (nucleotide-database for humann2, like /databases/chocophlan
 pp=/databases/uniref/humann2_database_downloads/uniref/ # uniref database (protein-database for humann2, like /databases/uniref)
-pmdb=/tools/metaphlan2/db_v20/mpa_v20_m200_marker_info.txt #metaphlan2 database (like /tools/metaphlan2/db_v20/mpa_v20_m200.pkl)
+pmdb=/tools/metaphlan2/db_v20/mpa_v20_m200.pkl #metaphlan2 database (like /tools/metaphlan2/db_v20/mpa_v20_m200.pkl)
 ncores=16 #number of cores
-
-### Set up Databases
-#mkdir -p /databases/chocophlan/
-#cd /databases/chocophlan/
-#humann2_databases --download chocophlan DEMO humann2_database_downloads
-
-##HUMANnN2 Databases ( database : build = location )
-##chocophlan : DEMO = http://huttenhower.sph.harvard.edu/humann2_data/chocophlan/DEMO_chocophlan.tar.gz
-##chocophlan : full = http://huttenhower.sph.harvard.edu/humann2_data/chocophlan/full_chocophlan.tar.gz
-##uniref : DEMO_diamond = http://huttenhower.sph.harvard.edu/humann2_data/uniprot/uniref50_GO_filtered/uniref50_DEMO_diamond.tar.gz
-##uniref : diamond = http://huttenhower.sph.harvard.edu/humann2_data/uniprot/uniref50_GO_filtered/uniref50_GO_filtered_diamond.tar.gz
-##uniref : rapsearch2 = http://huttenhower.sph.harvard.edu/humann2_data/uniprot/uniref50_GO_filtered/uniref50_GO_filtered_rapsearch2.tar.gz
-
-#mkdir -p /databases/uniref/
-#cd /databases/uniref/
-#humann2_databases --download uniref DEMO_diamond humann2_database_downloads
-
-#bowtie2-build metaphlan2/markers.fasta metaphlan2/db_v21/mpa_v21_m200
-#cd /tools/metaphlan2/db_v20
-#wget https://bitbucket.org/biobakery/metaphlan2/downloads/mpa_v20_m200.tar
-#tar xvf mpa_v20_m200.tar
-#bzip2 -d mpa_v20_m200.fna.bz2
-#bowtie2-build mpa_v20_m200.fna mpa_v20_m200
-
-# test - bash curatedMetagenomicData_pipeline.sh MV_FEI4_t1Q14 "SRR4052038"
 
 sample=$1
 runs=$2
