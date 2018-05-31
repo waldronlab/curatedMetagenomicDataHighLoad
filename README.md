@@ -29,7 +29,7 @@ The scripts in this directory allow the user to reproduce the entire process of 
   This container is automatically build from the Dockerfile in [GitHub](https://github.com/stevetsa/curatedMetagenomicDataHighLoad)  
   There are some [confusion](https://groups.google.com/forum/#!topic/metaphlan-users/t6IV1PxgNNA) about the location of the databases for the new Metaphlan2.
   The get-around is to duplicate the database files for metaphlan in two locations metaphlan2/db_v20 and metaphlan2/databases/  
-   
+  On AWS m5.4xlarge instance, with 50GB Volume attached.  "SRR4052038" below took about 30 min.   
 
   ```
   #sudo apt-get install -y docker.io #install Docker if needed
