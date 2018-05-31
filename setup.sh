@@ -25,9 +25,11 @@ humann2_databases --download uniref DEMO_diamond humann2_database_downloads
 
 ### Metaphlan2 databases download and build
 mkdir -p /tools/metaphlan2/db_v20
+mkdir -p /tools/metaphlan2/databases
 cd /tools/metaphlan2/db_v20
 wget https://bitbucket.org/biobakery/metaphlan2/downloads/mpa_v20_m200.tar
 tar xvf mpa_v20_m200.tar
 bzip2 -d mpa_v20_m200.fna.bz2
 bowtie2-build mpa_v20_m200.fna mpa_v20_m200
+cp /tools/metaphlan2/db_v20/*.* /tools/metaphlan2/databases/. 
 

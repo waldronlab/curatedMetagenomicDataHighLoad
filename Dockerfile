@@ -27,17 +27,9 @@ RUN tar xvzf sratoolkit.current-ubuntu64.tar.gz
 WORKDIR /tools/sratoolkit.2.9.0-ubuntu64
 ENV PATH="/tools/sratoolkit.2.9.0-ubuntu64/bin:${PATH}"
 
-## Install HUMANN2 and set up databases
+## Install HUMANN2
 RUN pip install --upgrade pip 
 RUN pip install humann2
-
-#RUN mkdir -p /databases/chocophlan/
-#WORKDIR /databases/chocophlan/
-#RUN humann2_databases --download chocophlan DEMO humann2_database_downloads
-
-#RUN mkdir -p /databases/uniref/
-#WORKDIR /databases/uniref/
-#RUN humann2_databases --download uniref DEMO_diamond humann2_database_downloads
 
 ## Install metaphlan
 WORKDIR /tools
@@ -59,16 +51,6 @@ RUN mv biobakery-metaphlan2* metaphlan2
 ENV PATH $PATH:/tools/metaphlan2/:/tools/metaphlan2/utils
 ENV MPA_DIR /tools/metaphlan2/
 
-#RUN mkdir -p /tools/metaphlan2/db_v20/
-#RUN wget -O /tools/metaphlan2/db_v20/mpa_v20_m200_marker_info.txt.bz2 https://bitbucket.org/biobakery/metaphlan2/downloads/mpa_v20_m200_marker_info.txt.bz2
-#RUN bzip2 -d /tools/metaphlan2/db_v20/mpa_v20_m200_marker_info.txt.bz2
-
-#WORKDIR /tools/metaphlan2/db_v20
-#RUN wget https://bitbucket.org/biobakery/metaphlan2/downloads/mpa_v20_m200.tar
-#RUN tar xvf mpa_v20_m200.tar
-#RUN bzip2 -d mpa_v20_m200.fna.bz2
-#RUN bowtie2-build mpa_v20_m200.fna mpa_v20_m200
-
 ## Install BowTie2
 WORKDIR /tools
 RUN wget https://sourceforge.net/projects/bowtie-bio/files/bowtie2/2.3.4.1/bowtie2-2.3.4.1-linux-x86_64.zip
@@ -81,7 +63,7 @@ ENV PATH="/root/.aspera/cli/bin:${PATH}"
 
 WORKDIR /
 #RUN git clone https://github.com/waldronlab/curatedMetagenomicDataHighLoad.git
-RUN git clone https://github.com/stevetsa/curatedMetagenomicDataHighLoad.git
+#RUN git clone https://github.com/stevetsa/curatedMetagenomicDataHighLoad.git
 
 RUN pip install awscli --upgrade --user
 ENV PATH="~/.local/bin:${PATH}"

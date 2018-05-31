@@ -26,13 +26,22 @@ The scripts in this directory allow the user to reproduce the entire process of 
 * When done, your output profile files are properly organized and ready to be [included](https://github.com/waldronlab/curatedMetagenomicData/wiki/The-curatedMetagenomicData-pipelines) in the *curatedMetagenomicData* package.
 
 * To run the [Docker container](https://hub.docker.com/r/stevetsa/curatedmetagenomicdatahighload/)  
-  This container is automatically build from the Dockerfile in [GitHub](https://github.com/stevetsa/curatedMetagenomicDataHighLoad) 
+  This container is automatically build from the Dockerfile in [GitHub](https://github.com/stevetsa/curatedMetagenomicDataHighLoad)  
+  There are some [confusion](https://groups.google.com/forum/#!topic/metaphlan-users/t6IV1PxgNNA) about the location of the databases for the new Metaphlan2.
+  The get-around is to duplicate the database files for metaphlan in two locations metaphlan2/db_v20 and metaphlan2/databases/  
+   
+
   ```
   #sudo apt-get install -y docker.io #install Docker if needed
   docker pull stevetsa/curatedmetagenomicdatahighload
   docker run -it stevetsa/curatedmetagenomicdatahighload
+
   ## mount the current directory in the container for debugging
   #docker run -v `pwd`:`pwd` -w `pwd` -i -t stevetsa/curatedmetagenomicdatahighload
-  ## once in container, set up databases (line 19-40 in [script](https://github.com/stevetsa/curatedMetagenomicDataHighLoad/blob/master/curatedMetagenomicData_pipeline.sh)) then run
-  bash curatedMetagenomicData_pipeline.sh MV_FEI4_t1Q14 "SRR4052038"
+
+  ## Inside container - 
+  git clone https://github.com/stevetsa/curatedMetagenomicDataHighLoad.git
+  cd curatedMetagenomicDataHighLoad
+  bash setup.sh
+  bash curatedMetagenomicData_pipeline.sh MV_FEI4_t1Q14 "SRR4052038" 
   ```
