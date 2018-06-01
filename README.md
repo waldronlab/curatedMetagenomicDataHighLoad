@@ -45,3 +45,9 @@ The scripts in this directory allow the user to reproduce the entire process of 
   bash setup.sh
   bash curatedMetagenomicData_pipeline.sh MV_FEI4_t1Q14 "SRR4052038" 
   ```
+
+# New components for dockerization
+
+* `configrc`: source this to set version numbers or other configurations
+* `download_humann2_databases.sh`: Install humann2, download its uniref and chocophlan databases, and copy these to *s3://curatedmetagenomics.bioconductor.org/humann2_database_downloads_$humann2_version*. Note this also requires environment variables *AWS_SECRET_ACCESS_KEY* and *AWS_ACCESS_KEY_ID* to be set
+* `parsemetadata.sh`: specify a `_metadata.tsv` filename and return pipeline commands in the format of `curatedMetagenomicData_pipeline_allsamples.sh` to *stdout*.
