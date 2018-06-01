@@ -1,0 +1,77 @@
+Starting downloading run SRR4052038
+Completed: 909697K bytes transferred in 56 seconds
+ (131306K bits/sec), in 1 file.
+Dumping run SRR4052038
+Rejected 86588 READS because READLEN < 1
+Read 7178589 spots for MV_FEI4_t1Q14/reads/SRR4052038.sra
+Written 7178589 spots for MV_FEI4_t1Q14/reads/SRR4052038.sra
+Finished downloading of run SRR4052038
+Downloaded.
+Concatenating runs...
+Output files will be written to: /testrun/MV_FEI4_t1Q14/humann2
+Removing spaces from identifiers in input file ...
+
+
+Running metaphlan2.py ........
+
+Found g__Escherichia.s__Escherichia_coli : 67.53% of mapped reads
+Found g__Escherichia.s__Escherichia_unclassified : 9.64% of mapped reads
+Found g__Bifidobacterium.s__Bifidobacterium_breve : 9.27% of mapped reads
+Found g__Bacteroides.s__Bacteroides_vulgatus : 7.90% of mapped reads
+Found g__Veillonella.s__Veillonella_parvula : 3.22% of mapped reads
+Found g__Veillonella.s__Veillonella_unclassified : 0.96% of mapped reads
+Found g__Streptococcus.s__Streptococcus_parasanguinis : 0.76% of mapped reads
+Found g__Siphoviridae_noname.s__Propionibacterium_phage_PAD20 : 0.25% of mapped reads
+Found g__Rothia.s__Rothia_unclassified : 0.17% of mapped reads
+Found g__Clostridium.s__Clostridium_butyricum : 0.17% of mapped reads
+Found g__Rothia.s__Rothia_mucilaginosa : 0.11% of mapped reads
+Found g__Streptococcus.s__Streptococcus_mitis_oralis_pneumoniae : 0.01% of mapped reads
+
+Total species selected from prescreen: 12
+
+Selected species explain 99.98% of predicted community composition
+
+
+Creating custom ChocoPhlAn database ........
+
+
+Running bowtie2-build ........
+
+
+Running bowtie2 ........
+
+Total bugs from nucleotide alignment: 3
+g__Bacteroides.s__Bacteroides_vulgatus: 4095845 hits
+g__Streptococcus.s__Streptococcus_parasanguinis: 55895 hits
+g__Streptococcus.s__Streptococcus_mitis_oralis_pneumoniae: 20186 hits
+
+Total gene families from nucleotide alignment: 6260
+
+Unaligned reads after nucleotide alignment: 73.9251081065 %
+
+
+Running diamond ........
+
+
+Aligning to reference database: uniref90_demo_prots.dmnd
+
+Total bugs after translated alignment: 4
+g__Bacteroides.s__Bacteroides_vulgatus: 4095845 hits
+g__Streptococcus.s__Streptococcus_parasanguinis: 55895 hits
+unclassified: 741925 hits
+g__Streptococcus.s__Streptococcus_mitis_oralis_pneumoniae: 20186 hits
+
+Total gene families after translated alignment: 7952
+
+Unaligned reads after translated alignment: 72.6265533528 %
+
+
+Computing gene families ...
+
+Computing pathways abundance and coverage ...
+
+Output files created: 
+/testrun/MV_FEI4_t1Q14/humann2/MV_FEI4_t1Q14_genefamilies.tsv
+/testrun/MV_FEI4_t1Q14/humann2/MV_FEI4_t1Q14_pathabundance.tsv
+/testrun/MV_FEI4_t1Q14/humann2/MV_FEI4_t1Q14_pathcoverage.tsv
+

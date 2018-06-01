@@ -1,24 +1,28 @@
 #!/bin/bash
 
 ### usage: bash curatedMetagenomicData_pipeline.sh sample_name "SRRxxyxyxx;SRRyyxxyyx"
+### bash curatedMetagenomicData_pipeline.sh MV_FEI4_t1Q14 "SRR4052038"
 
 ### before running this script, be sure that these tools are in your path
 # fastq-dump
 # humann2
 # metaphlan2
 # python
+# run setup.sh to download/build the databases needed
 
 ### before running this script, set these paths and variables
-pa=/tools/aspera/connect/ #aspera path (like /tools/aspera/connect/)
-pm=/tools/metaphlan2/metaphlan2.py #metaphlan2 path (like /tools/metaphlan2/bin/metaphlan2.py)
-pc=/databases/chocophlan # chocophlan database (nucleotide-database for humann2, like /databases/chocophlan
-pp=/databases/uniref/ # uniref database (protein-database for humann2, like /databases/uniref)
-pmdb=/tools/metaphlan2/db_v20/mpa_v20_m200.pkl #metaphlan2 database (like /tools/metaphlan2/db_v20/mpa_v20_m200.pkl)
+pa="/root/.aspera/cli/" #aspera path (like /tools/aspera/connect/)
+pm="/tools/metaphlan2/metaphlan2.py" #metaphlan2 path (like /tools/metaphlan2/bin/metaphlan2.py)
+pc="/databases/chocophlan/humann2_database_downloads/chocophlan/" # chocophlan database (nucleotide-database for humann2, like /databases/chocophlan
+pp="/databases/uniref/humann2_database_downloads/uniref/" # uniref database (protein-database for humann2, like /databases/uniref)
+pmdb="/tools/metaphlan2/databases/mpa_v20_m200.pkl" #metaphlan2 database (like /tools/metaphlan2/db_v20/mpa_v20_m200.pkl)
 ncores=16 #number of cores
 
 sample=$1
 runs=$2
 
+#mkdir -p /testrun
+#cd /testrun
 mkdir -p ${sample}/reads
 
 while [ "$runs" ] ; do
@@ -42,7 +46,8 @@ mkdir -p ${sample}/humann2
 humann2 --input ${sample}/reads/${sample}.fastq --output ${sample}/humann2 --nucleotide-database ${pc} --protein-database ${pp} --threads=${ncores}
 humann2_renorm_table --input ${sample}/humann2/${sample}_genefamilies.tsv --output ${sample}/humann2/${sample}_genefamilies_relab.tsv --units relab
 humann2_renorm_table --input ${sample}/humann2/${sample}_pathabundance.tsv --output ${sample}/humann2/${sample}_pathabundance_relab.tsv --units relab
-python run_markers2.py --input_dir ${sample}/humann2/${sample}_humann2_temp/ --bt2_ext _metaphlan_bowtie2.txt --metaphlan_path ${pm} --metaphlan_db ${pmdb} --output_dir ${sample}/humann2 --nprocs ${ncores}
+#python run_markers2.py --input_dir ${sample}/humann2/${sample}_humann2_temp/ --bt2_ext _metaphlan_bowtie2.txt --metaphlan_path ${pm} --metaphlan_db ${pmdb} --output_dir ${sample}/humann2 --nprocs ${ncores}
+python /home/ubuntu/curatedMetagenomicDataHighLoad/run_markers2.py --input_dir ${sample}/humann2/${sample}_humann2_temp/ --bt2_ext _metaphlan_bowtie2.txt --metaphlan_path ${pm} --metaphlan_db ${pmdb} --output_dir ${sample}/humann2 --nprocs ${ncores}
 
 mkdir genefamilies; mv ${sample}/humann2/${sample}_genefamilies.tsv genefamilies/${sample}.tsv;
 mkdir genefamilies_relab; mv ${sample}/humann2/${sample}_genefamilies_relab.tsv genefamilies_relab/${sample}.tsv;
@@ -54,4 +59,5 @@ mkdir pathabundance_relab; mv ${sample}/humann2/${sample}_pathabundance_relab.ts
 mkdir pathcoverage; mv ${sample}/humann2/${sample}_pathcoverage.tsv pathcoverage/${sample}.tsv;
 mkdir humann2_temp; mv ${sample}/humann2/${sample}_humann2_temp/ humann2_temp/ #comment this line if you don't want to keep humann2 temporary files
 
-rm -r ${sample}
+#rm -r ${sample}
+
