@@ -25,9 +25,29 @@ The scripts in this directory allow the user to reproduce the entire process of 
 
 * When done, your output profile files are properly organized and ready to be [included](https://github.com/waldronlab/curatedMetagenomicData/wiki/The-curatedMetagenomicData-pipelines) in the *curatedMetagenomicData* package.
 
+* To run the [Docker container](https://hub.docker.com/r/stevetsa/curatedmetagenomicdatahighload/)  
+  This container is automatically build from the Dockerfile in [GitHub](https://github.com/stevetsa/curatedMetagenomicDataHighLoad)  
+  There are some [confusion](https://groups.google.com/forum/#!topic/metaphlan-users/t6IV1PxgNNA) about the location of the databases for the new Metaphlan2.
+  The get-around is to duplicate the database files for metaphlan in two locations metaphlan2/db_v20 and metaphlan2/databases/  
+  On AWS m5.4xlarge instance, with 50GB Volume attached.  "SRR4052038" below took about 30 min.   
 
-## Docker
+  ```
+  #sudo apt-get install -y docker.io #install Docker if needed
+  docker pull stevetsa/curatedmetagenomicdatahighload
+  docker run -it stevetsa/curatedmetagenomicdatahighload
 
-```sh
-docker build -t seandavi/CMGD .
-```
+  ## mount the current directory in the container for debugging
+  #docker run -v `pwd`:`pwd` -w `pwd` -i -t stevetsa/curatedmetagenomicdatahighload
+
+  ## Inside container - 
+  git clone https://github.com/stevetsa/curatedMetagenomicDataHighLoad.git
+  cd curatedMetagenomicDataHighLoad
+  bash setup.sh
+  bash curatedMetagenomicData_pipeline.sh MV_FEI4_t1Q14 "SRR4052038" 
+  ```
+
+# New components for dockerization
+
+* `configrc`: source this to set version numbers or other configurations
+* `download_humann2_databases.sh`: Install humann2, download its uniref and chocophlan databases, and copy these to *s3://curatedmetagenomics.bioconductor.org/humann2_database_downloads_$humann2_version*. Note this also requires environment variables *AWS_SECRET_ACCESS_KEY* and *AWS_ACCESS_KEY_ID* to be set
+* `parsemetadata.sh`: specify a `_metadata.tsv` filename and return pipeline commands in the format of `curatedMetagenomicData_pipeline_allsamples.sh` to *stdout*.
