@@ -13,8 +13,7 @@ Bioconda to install. The Bioconda install command for MetaPhlAn3 is:
 conda install -c bioconda metaphlan=3
 ```
 
-Maybe based on https://hub.docker.com/r/conda/miniconda3? Will have to
-test.
+Maybe based on https://hub.docker.com/r/conda/miniconda3? This image has a problem that installing metaphlan3 downgrades the Python version and breaks conda and probably other things.
 
 2. Build a sratoolkit docker image (see docker directory for Dockerfile)
 
@@ -36,6 +35,8 @@ bash curatedMetagenomicData_pipeline.sh M1.1.SA "SRR2244401;SRR2236793;SRR224363
     - outputs: three MetaPhlAn output files (bugs list, marker presence, marker abundance)
 
 5. Add HUMAnN3 + StrainPhlAn to the above container
+
+For HUMAnN2, see https://bioconda.github.io/recipes/humann2/README.html (HUMAnN3 recipe should be coming soon, can use HUMAnN2 in the meanwhile).
 
 6. Make a nextflow command for running HUMAnN3:
     - inputs: will be the MetaPhlAn output files
