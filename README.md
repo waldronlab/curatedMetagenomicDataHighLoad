@@ -13,7 +13,7 @@ Bioconda to install. The Bioconda install command for MetaPhlAn3 is:
 conda install -c bioconda metaphlan=3
 ```
 
-Maybe based on https://hub.docker.com/r/conda/miniconda3? This image has a problem that installing metaphlan3 downgrades the Python version and breaks conda and probably other things.
+Try based on https://hub.docker.com/r/bioconda/bioconda-utils-build-env.
 
 2. Build a sratoolkit docker image (see docker directory for Dockerfile)
 
