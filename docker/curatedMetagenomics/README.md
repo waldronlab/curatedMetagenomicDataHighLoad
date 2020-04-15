@@ -1,3 +1,7 @@
+## Dockerhub
+
+https://hub.docker.com/repository/docker/waldronlab/curatedmetagenomicdatahighload
+
 ## Usage
 
 ```
