@@ -10,14 +10,9 @@ However, there are some shortcomings:
 
 Some things that need to be done:
 
-1. [DONE](https://github.com/waldronlab/curatedMetagenomicDataHighLoad/tree/master/docker/curatedMetagenomics) Build a MetaPhlan3 Docker image using Bioconda to install. The Bioconda install command for MetaPhlAn3 is:
-```
-conda install -c bioconda metaphlan=3
-```
+1. **DONE**  Build a MetaPhlan3 Docker image using Bioconda to install.  (see [docker directory](https://github.com/waldronlab/curatedMetagenomicDataHighLoad/tree/master/docker/curatedMetagenomics) for Dockerfile and link to Dockerhub)
 
-Try based on https://hub.docker.com/r/bioconda/bioconda-utils-build-env.
-
-2. [DONE](https://github.com/waldronlab/curatedMetagenomicDataHighLoad/tree/master/docker/sratoolkit) *but needs testing* Build a sratoolkit docker image (see docker directory for Dockerfile)
+2. **DONE but needs testing** Build a sratoolkit docker image (see [docker directory](https://github.com/waldronlab/curatedMetagenomicDataHighLoad/tree/master/docker/sratoolkit) for Dockerfile and link to dockerhub)
 
 3. Make a nextflow command for using sratoolkit to download and concatenate fastq
 files for given identifiers.  See
