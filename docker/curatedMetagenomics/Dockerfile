@@ -5,6 +5,7 @@ RUN conda install -c bioconda metaphlan=3
 RUN conda create -n humann-3alpha metaphlan=3
 RUN git clone https://github.com/biobakery/humann.git
 RUN cd humann
+RUN git checkout 3.0.0-alpha
 RUN python setup.py install 
 
 COPY curatedMetagenomicData_pipeline.sh /root/
@@ -15,5 +16,6 @@ RUN conda install -c bioconda sra-tools
 
 RUN fastqdump --version
 RUN metaphlan --version
+RUN humann3 --version
 
 WORKDIR /root
