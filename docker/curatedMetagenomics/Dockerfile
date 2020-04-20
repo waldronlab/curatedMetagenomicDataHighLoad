@@ -11,4 +11,3 @@ RUN srabin=$PWD/`find . -name "sratoolkit*" -type d`/bin
 ENV PATH=$PATH:$srabin
 
 WORKDIR /root
-
