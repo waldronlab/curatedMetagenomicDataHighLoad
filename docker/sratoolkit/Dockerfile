@@ -6,7 +6,7 @@ RUN apt-get update
 RUN apt-get install -y wget
 
 RUN wget --output-document sratoolkit.tar.gz http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/current/sratoolkit.current-ubuntu64.tar.gz
-RUN tar -xvzf *.tar.gz
+RUN tar -xvzf sratoolkit.tar.gz
 
 WORKDIR /root
 
