@@ -50,5 +50,6 @@ RUN fastq-dump --version
 RUN metaphlan --version
 RUN humann3 --version
 
+RUN apt-get install wget
 
 WORKDIR /root
