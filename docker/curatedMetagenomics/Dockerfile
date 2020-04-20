@@ -7,6 +7,9 @@ RUN git clone https://github.com/biobakery/humann.git
 RUN cd humann
 RUN python setup.py install 
 
+COPY curatedMetagenomicData_pipeline.sh /root/
+RUN chmod a+rwx /root/curatedMetagenomicData_pipeline.sh
+
 ## SRA Toolkit
 RUN conda install -c bioconda sra-tools
 
