@@ -5,17 +5,16 @@
 ### before running this script, be sure that these tools are in your path
 # fastq-dump
 # humann2
-# metaphlan2
+# metaphlan
 # python
 
 sample=$1
 runs=$2
 
 ### before running this script, set these paths and variables
-pm=/opt/metaphlan2/biobakery-metaphlan2/metaphlan2.py #metaphlan2 path (like /tools/metaphlan2/bin/metaphlan2.py)
 pc=/dbs/humann2/chocophlan # chocophlan database (nucleotide-database for humann2, like /databases/chocophlan
 pp=/dbs/humann2/uniref # uniref database (protein-database for humann2, like /databases/uniref)
-pmdb=/opt/metaphlan2/biobakery-metaphlan2/db_v20/mpa_v20_m200.pkl #metaphlan2 database (like /tools/metaphlan2/db_v20/mpa_v20_m200.pkl)
+pmdb=/opt/metaphlan2/biobakery-metaphlan2/db_v30_CHOCOPhlAn_201901/mpa_v30_CHOCOPhlAn_201901.pkl #metaphlan2 database (like /tools/metaphlan2/db_v20/mpa_v20_m200.pkl)
 ncores=2 #number of cores
 
 mkdir -p $pc
@@ -64,7 +63,12 @@ humann2_renorm_table --input humann2/${sample}_genefamilies.tsv --output humann2
 humann2_renorm_table --input humann2/${sample}_pathabundance.tsv --output humann2/${sample}_pathabundance_relab.tsv --units relab
 echo 'run_markers2.py'
 # NOTE: using absolute path here!!!
-python /root/run_markers2.py --input_dir humann2/${sample}_humann2_temp/ --bt2_ext _metaphlan_bowtie2.txt --metaphlan_path ${pm} --metaphlan_db ${pmdb} --output_dir humann2 --nprocs ${ncores}
+python /root/run_markers2.py \
+    --input_dir humann2/${sample}_humann2_temp/ \
+    --bt2_ext _metaphlan_bowtie2.txt \
+    --metaphlan_db ${pmdb} \
+    --output_dir humann2 \
+    --nprocs ${ncores}
 
 mkdir genefamilies; mv humann2/${sample}_genefamilies.tsv genefamilies/${sample}.tsv;
 mkdir genefamilies_relab; mv humann2/${sample}_genefamilies_relab.tsv genefamilies_relab/${sample}.tsv;

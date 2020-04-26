@@ -8,15 +8,11 @@ import multiprocessing
 
 def read_params():
     p = argparse.ArgumentParser()
-    p.add_argument('--metaphlan_path', required=False,
-                   default='metaphlan',
-                   help='command for running MetaPhlAn'
-                   type=str)
     p.add_argument('--metaphlan_db', required=False, 
                    default='metaphlan/db_v30_CHOCOPhlAn_201901/mpa_v30_CHOCOPhlAn_201901.pkl',
                    type=str)
     p.add_argument('--bt2_ext', required=False,
-                   default='.bowtie2.out.bz2',
+                   default='.bowtie2_out.bz2',
                    type=str)
     p.add_argument('--input_dir', required=True, type=str)
     p.add_argument('--output_dir', required=True, type=str)
@@ -30,7 +26,6 @@ def run(cmd):
     os.system(cmd)
 
 def run_markers(args):
-    metaphlan_path = args['metaphlan_path']
     metaphlan_db = args['metaphlan_db']
     input_dir = args['input_dir']
     bt2_ext = args['bt2_ext']
@@ -45,13 +40,13 @@ def run_markers(args):
     for ifn in ifns:
         for ana_type in ['rel_ab', 'marker_pres_table', 'marker_ab_table']:
             ofn = ifn.replace(bt2_ext, '.%s'%ana_type)
-            cmd = '{} --mpa_pkl {} --input_type bowtie2out {} -o '.format(metaphlan_path, metaphlan_db, ifn, ofn)
+            cmd = 'metaphlan --mpa_pkl {} --input_type bowtie2out {} -o '.format(metaphlan_db, ifn, ofn)
             if not os.path.isfile(ofn):
                 cmds.append(cmd)
 
             base_ofn = os.path.basename(ifn).replace(bt2_ext, '.%s'%ana_type)
             ofn = os.path.join(output_dir, base_ofn)
-            cmd = '{} --mpa_pkl {} --input_type bowtie2out {} {} -o '.format(metaphlan_path, metaphlan_db, params, ifn, ofn)
+            cmd = 'metaphlan --mpa_pkl {} --input_type bowtie2out {} {} -o '.format(metaphlan_db, params, ifn, ofn)
             if not os.path.isfile(ofn):
                 cmds.append(cmd)
 
