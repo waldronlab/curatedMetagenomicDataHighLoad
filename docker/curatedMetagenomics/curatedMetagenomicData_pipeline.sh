@@ -4,30 +4,45 @@
 
 ### before running this script, be sure that these tools are in your path
 # fastq-dump
-# humann2
+# humann3
 # metaphlan
 # python
 
 sample=$1
 runs=$2
 
-### before running this script, set these paths and variables
-pc=/dbs/humann2/chocophlan # chocophlan database (nucleotide-database for humann2, like /databases/chocophlan
-pp=/dbs/humann2/uniref # uniref database (protein-database for humann2, like /databases/uniref)
-pmdb=/opt/metaphlan2/biobakery-metaphlan2/db_v30_CHOCOPhlAn_201901/mpa_v30_CHOCOPhlAn_201901.pkl #metaphlan2 database (like /tools/metaphlan2/db_v20/mpa_v20_m200.pkl)
+### example docker command:
+# docker run -it -v /nobackup/16tb_b/biobakery.db/metaphlan:/usr/local/miniconda3/lib/python3.7/site-packages/metaphlan/metaphlan_databases -v /nobackup/16tb_b/biobakery.db/humann:/usr/local/humann_databases waldronlab/curatedmetagenomics
+
+### the default metaphlan directory is set by the $mpa_dir environment variable
+### in the waldronlab/curatedmetagenomics docker container this is:
+### /usr/local/miniconda3/lib/python3.7/site-packages/metaphlan
+metaphlandb="${mpa_dir}/metaphlan_databases"
+
+### Set a location for the humann data directory
+### This script assumes the humann data directory is set by the $humanndb environment variable
+### in the waldronlab/curatedmetagenomics docker container this is:
+### /usr/local/humann_datbases
+# humanndb="/usr/local/humanndb"
+
+chocophlandir="$humanndb/chocophlan" # chocophlan database (nucleotide-database for humann2, like /databases/chocophlan
+unirefdir="$humanndb/uniref" # uniref database (protein-database for humann2, like /databases/uniref)
+pmdb="${metaplhandb}/mpa_v30_CHOCOPhlAn_201901.pkl" #metaphlan2 database (like /tools/metaphlan2/db_v20/mpa_v20_m200.pkl)
 ncores=2 #number of cores
 
-mkdir -p $pc
-mkdir -p $pp
+mkdir -p $chocophlandir
+mkdir -p $unirefdir
 
-if [ ! "$(ls -A $pp)" ]; then
-    wget https://storage.googleapis.com/curatedmetagenomicdata/dbs/uniref/uniref90_annotated_1_1.tar.gz
-    tar -xvz -C /dbs/humann2/uniref/ -f uniref90_annotated_1_1.tar.gz
+if [ ! "$(ls -A $unirefdir)" ]; then
+    #    wget https://storage.googleapis.com/curatedmetagenomicdata/dbs/uniref/uniref90_annotated_1_1.tar.gz
+    #    tar -xvz -C $unirefdir -f uniref90_annotated_1_1.tar.gz
+    humann3_databases --download uniref uniref90_diamond $humanndb
 fi
 
-if [ ! "$(ls -A $pc)" ]; then
-    wget https://storage.googleapis.com/curatedmetagenomicdata/dbs/chocophlan/full_chocophlan_plus_viral.v0.1.1.tar.gz  
-    tar -xvz -C /dbs/humann2/chocophlan/ -f full_chocophlan_plus_viral.v0.1.1.tar.gz
+if [ ! "$(ls -A $chocophlandir)" ]; then
+    #    wget https://storage.googleapis.com/curatedmetagenomicdata/dbs/chocophlan/full_chocophlan_plus_viral.v0.1.1.tar.gz  
+    #    tar -xvz -C $chocophlandir -f full_chocophlan_plus_viral.v0.1.1.tar.gz
+    humann3_databases --download chocophlan full $humanndb
 fi
 
 
@@ -37,19 +52,6 @@ mkdir -p ${OUTPUT_PATH}
 
 cd ${OUTPUT_PATH}
 
-# while [ "$runs" ] ; do
-# 	iter=${runs%%;*}
-#         shortyone=$(echo "$iter" | cut -c1-3)
-#         shortytwo=$(echo "$iter" | cut -c1-6)
-# 	echo 'Starting downloading run '${iter}
-#         ${pa}bin/ascp -T -i ${pa}etc/asperaweb_id_dsa.openssh anonftp@ftp.ncbi.nlm.nih.gov:/sra/sra-instant/reads/ByRun/sra/${shortyone}/${shortytwo}/${iter}/${iter}.sra ${sample}/reads/
-# 	echo 'Dumping run '${iter}
-#         fastq-dump --split-files ${sample}/reads/${iter}.sra --outdir ${sample}/reads/
-#         [ "$runs" = "$iter" ] && \
-#         runs='' || \
-#         runs="${runs#*;}"
-# 	echo 'Finished downloading of run '${iter}
-# done
 fastq-dump --outdir reads $2
 echo 'Downloaded.'
 echo 'Concatenating runs...'
@@ -57,7 +59,7 @@ cat reads/*.fastq > reads/${sample}.fastq
 
 mkdir -p humann2
 echo 'Running humann2'
-humann2 --input reads/${sample}.fastq --output humann2 --nucleotide-database ${pc} --protein-database ${pp} --threads=${ncores}
+humann2 --input reads/${sample}.fastq --output humann2 --nucleotide-database ${chocophlandir} --protein-database ${unirefdir} --threads=${ncores}
 echo 'renorm_table runs'
 humann2_renorm_table --input humann2/${sample}_genefamilies.tsv --output humann2/${sample}_genefamilies_relab.tsv --units relab
 humann2_renorm_table --input humann2/${sample}_pathabundance.tsv --output humann2/${sample}_pathabundance_relab.tsv --units relab
