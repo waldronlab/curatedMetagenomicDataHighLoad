@@ -22,7 +22,7 @@ def read_params():
     return vars(p.parse_args())
 
 def run(cmd):
-    print cmd
+    print(cmd)
     os.system(cmd)
 
 def run_markers(args):
