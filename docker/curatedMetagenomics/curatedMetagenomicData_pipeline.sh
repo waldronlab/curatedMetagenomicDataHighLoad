@@ -25,24 +25,34 @@ metaphlandb="${mpa_dir}/metaphlan_databases"
 ### /usr/local/humann_datbases
 # humanndb="/usr/local/humanndb"
 
-chocophlandir="$humanndb/chocophlan" # chocophlan database (nucleotide-database for humann2, like /databases/chocophlan
-unirefdir="$humanndb/uniref" # uniref database (protein-database for humann2, like /databases/uniref)
-pmdb="${metaplhandb}/mpa_v30_CHOCOPhlAn_201901.pkl" #metaphlan2 database (like /tools/metaphlan2/db_v20/mpa_v20_m200.pkl)
+chocophlandir="$humanndb/chocophlan" # chocophlan database directory (nucleotide-database for humann2, like /databases/chocophlan
+unirefdir="$humanndb/uniref" # uniref database directory (protein-database for humann2, like /databases/uniref)
+pmdb="${metaplhandb}/mpa_v296_CHOCOPhlAn_201901.pkl" #metaphlan2 database (like /usr/local/miniconda3/lib/python3.7/site-packages/metaphlan/metaphlan_databases/mpa/v296/CHOCOPhlAn_201901.pkl)
+
+## figure these out by doing `humann3_databases`
+urlprefix="http://huttenhower.sph.harvard.edu/humann2_data"
+
+unirefname="uniref90_annotated_v201901.tar.gz"
+unirefurl="${urlprefix}/uniprot/uniref_annotated/${unirefname}"
+
+chocophlanname="uniref90_annotated_v201901.tar.gz"
+chocophlanurl="${urlprefix}/chocophlan/${chocophlanname}"
+
 ncores=2 #number of cores
 
 mkdir -p $chocophlandir
 mkdir -p $unirefdir
 
 if [ ! "$(ls -A $unirefdir)" ]; then
-    #    wget https://storage.googleapis.com/curatedmetagenomicdata/dbs/uniref/uniref90_annotated_1_1.tar.gz
-    #    tar -xvz -C $unirefdir -f uniref90_annotated_1_1.tar.gz
-    humann3_databases --download uniref uniref90_diamond $humanndb
+    wget unirefurl
+    tar -xvz -C $unirefdir -f $unirefname
+    rm $unirefname
 fi
 
 if [ ! "$(ls -A $chocophlandir)" ]; then
-    #    wget https://storage.googleapis.com/curatedmetagenomicdata/dbs/chocophlan/full_chocophlan_plus_viral.v0.1.1.tar.gz  
-    #    tar -xvz -C $chocophlandir -f full_chocophlan_plus_viral.v0.1.1.tar.gz
-    humann3_databases --download chocophlan full $humanndb
+    wget $chocophlanurl
+    tar -xvz -C $chocophlandir -f $chocophlanname
+    rm $chocophlanname
 fi
 
 
