@@ -62,8 +62,7 @@ echo 'renorm_table runs'
 humann2_renorm_table --input humann2/${sample}_genefamilies.tsv --output humann2/${sample}_genefamilies_relab.tsv --units relab
 humann2_renorm_table --input humann2/${sample}_pathabundance.tsv --output humann2/${sample}_pathabundance_relab.tsv --units relab
 echo 'run_markers2.py'
-# NOTE: using absolute path here!!!
-python /root/run_markers2.py \
+run_markers2.py \
     --input_dir humann2/${sample}_humann2_temp/ \
     --bt2_ext _metaphlan_bowtie2.txt \
     --metaphlan_db ${pmdb} \
