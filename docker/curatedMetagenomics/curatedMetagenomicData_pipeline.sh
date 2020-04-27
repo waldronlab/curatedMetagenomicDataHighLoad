@@ -24,7 +24,6 @@ metaphlandb="${mpa_dir}/metaphlan_databases"
 ### in the waldronlab/curatedmetagenomics docker container this is:
 ### /usr/local/humann_datbases
 # humanndb="/usr/local/humanndb"
-
 chocophlandir="$humanndb/chocophlan" # chocophlan database directory (nucleotide-database for humann2, like /databases/chocophlan
 unirefdir="$humanndb/uniref" # uniref database directory (protein-database for humann2, like /databases/uniref)
 pmdb="${metaplhandb}/mpa_v296_CHOCOPhlAn_201901.pkl" #metaphlan2 database (like /usr/local/miniconda3/lib/python3.7/site-packages/metaphlan/metaphlan_databases/mpa/v296/CHOCOPhlAn_201901.pkl)
@@ -34,9 +33,11 @@ urlprefix="http://huttenhower.sph.harvard.edu/humann2_data"
 
 unirefname="uniref90_annotated_v201901.tar.gz"
 unirefurl="${urlprefix}/uniprot/uniref_annotated/${unirefname}"
+#unirefurl="https://www.dropbox.com/s/yeur7nm7ej7spga/uniref90_annotated_v201901.tar.gz?dl=0"
 
 chocophlanname="uniref90_annotated_v201901.tar.gz"
 chocophlanurl="${urlprefix}/chocophlan/${chocophlanname}"
+#chocophlanurl="https://www.dropbox.com/s/das8hdof0zyuyh8/full_chocophlan.v296_201901.tar.gz?dl=0"
 
 ncores=2 #number of cores
 
