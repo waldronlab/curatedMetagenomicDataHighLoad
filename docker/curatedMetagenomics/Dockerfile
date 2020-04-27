@@ -18,12 +18,11 @@ RUN conda config --add channels conda-forge
 
 ## install metaphlan3 and humann3
 RUN conda update conda
-RUN conda install -c bioconda metaphlan=3
-RUN conda create -n humann-3alpha metaphlan=3
+RUN conda install -c bioconda metaphlan=3 
 WORKDIR /tmp
 RUN git clone https://github.com/biobakery/humann.git
 WORKDIR /tmp/humann
-RUN git checkout 3.0.0-alpha
+RUN git checkout 3.0.0-alpha-rename
 RUN python setup.py install
 
 ## install sratoolkit
@@ -51,6 +50,7 @@ RUN humann3 --version
 
 ## root directory for databases
 ENV mpa_dir=/usr/local/miniconda3/lib/python3.7/site-packages/metaphlan
+ENV hnn_dir=/usr/local/miniconda3/lib/python3.7/site-packages/humann
 ENV metaphlandb="${mpa_dir}/metaphlan_databases"
 ENV humanndb=/usr/local/humann_databases
 ENV chocophlandir="${humanndb}/chocophlan"

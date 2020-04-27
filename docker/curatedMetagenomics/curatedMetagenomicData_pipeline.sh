@@ -1,6 +1,7 @@
 #!/bin/bash
 
 ### usage: bash curatedMetagenomicData_pipeline.sh sample_name "SRRxxyxyxx;SRRyyxxyyx"
+### For testing usage: bash curatedMetagenomicData_pipeline.sh DEMO SRR042612 DEMO
 
 ### before running this script, be sure that these tools are in your path
 # fastq-dump
@@ -10,9 +11,11 @@
 
 sample=$1
 runs=$2
+run_demo=$3
 
 ### example docker command:
-# docker run -it -v /nobackup/16tb_b/biobakery.db/metaphlan:/usr/local/miniconda3/lib/python3.7/site-packages/metaphlan/metaphlan_databases -v /nobackup/16tb_b/biobakery.db/humann:/usr/local/humann_databases waldronlab/curatedmetagenomics
+# OUTPUT_PATH=/nobackup/16tb_b/aaa
+# docker run -it -e OUTPUT_PATH=$OUTPUT_PATH -v /nobackup/16tb_b/biobakery.db/metaphlan:/usr/local/miniconda3/lib/python3.7/site-packages/metaphlan/metaphlan_databases -v /nobackup/16tb_b/biobakery.db/humann:/usr/local/humann_databases waldronlab/curatedmetagenomics
 
 ### the default metaphlan directory is set by the $mpa_dir environment variable
 ### in the waldronlab/curatedmetagenomics docker container this is:
@@ -35,13 +38,15 @@ mdbn="mpa_v30_CHOCOPhlAn_201901" #metaphlan2 database (like /usr/local/miniconda
 urlprefix="http://huttenhower.sph.harvard.edu/humann2_data"
 
 unirefname="uniref90_annotated_v201901.tar.gz"
+DEMO_unirefname="uniref90_DEMO_diamond_v201901.tar.gz"
 unirefurl="${urlprefix}/uniprot/uniref_annotated/${unirefname}"
-DEMO_unirefurl="${urlprefix}/uniprot/uniref_annotated/uniref90_DEMO_diamond_v201901.tar.gz"
+DEMO_unirefurl="${urlprefix}/uniprot/uniref_annotated/${DEMO_unirefname}"
 #unirefurl="https://www.dropbox.com/s/yeur7nm7ej7spga/uniref90_annotated_v201901.tar.gz?dl=0"
 
 chocophlanname="full_chocophlan.v296_201901.tar.gz"
+DEMO_chocophlanname="DEMO_chocophlan.v296_201901.tar.gz"
 chocophlanurl="${urlprefix}/chocophlan/${chocophlanname}"
-DEMO_chocophlanurl="${urlprefix}/chocophlan/${chocophlanname/full/DEMO}"
+DEMO_chocophlanurl="${urlprefix}/chocophlan/${DEMO_chocophlanname}"
 #chocophlanurl="https://www.dropbox.com/s/das8hdof0zyuyh8/full_chocophlan.v296_201901.tar.gz?dl=0"
 
 ncores=2 #number of cores
@@ -49,19 +54,27 @@ ncores=2 #number of cores
 mkdir -p $chocophlandir
 mkdir -p $unirefdir
 
+## For testing purposes, use the reduced ChocoPhlAn and UniRef90 DEMO databases
+## A small fastq will be downloaded and profiled
+if [ ${run_demo} == 'DEMO' ]; then
+    unirefname=${DEMO_unirefname}
+    unirefurl=${DEMO_unirefurl}
+
+    chocophlanname=${DEMO_chocophlanname}
+    chocophlanurl=${DEMO_chocophlanurl}
+fi
+
 if [ ! "$(ls -A $unirefdir)" ]; then
-    wget unirefurl
+    wget $unirefurl
     tar -xvz -C $unirefdir -f $unirefname
     rm $unirefname
 fi
 
-if [ ! "$(ls -A $chocophlandir)" ]; then
+if [ ! "$(ls -A $chocophlandir)" ]; then+
     wget $chocophlanurl
     tar -xvz -C $chocophlandir -f $chocophlanname
     rm $chocophlanname
 fi
-
-
 
 echo "Working in ${OUTPUT_PATH}"
 mkdir -p ${OUTPUT_PATH}
@@ -71,13 +84,17 @@ cd ${OUTPUT_PATH}
 for run in ${runs//;/ }
 do
 	echo 'Dumping run '${run}
-    fasterq-dump --threads ${ncores} --split-files ${run} --outdir ${sample}/reads/
+    fasterq-dump --threads ${ncores} --split-files ${run} --outdir reads
     echo 'Finished downloading of run '${run}
 done
 echo 'Downloaded.'
 
 echo 'Concatenating runs...'
-cat reads/*.fastq > reads/${sample}.fastq
+if [ ${sample} == 'DEMO' ]; then
+    cat $hnn_dir/tests/data/demo.fastq > reads/${sample}.fastq
+else
+    cat reads/*.fastq > reads/${sample}.fastq
+fi
 
 mkdir -p humann
 echo 'Running humann'
