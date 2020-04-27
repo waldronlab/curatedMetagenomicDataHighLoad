@@ -1,7 +1,6 @@
 FROM ubuntu
 
-WORKDIR /root
-
+ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update
 RUN apt-get -y upgrade
 RUN apt-get install -y python3
@@ -11,8 +10,8 @@ RUN apt-get install -y wget
 
 ## Install conda
 RUN curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-RUN sh Miniconda3-latest-Linux-x86_64.sh -b
-ENV PATH=/root/miniconda3/bin:$PATH
+RUN sh Miniconda3-latest-Linux-x86_64.sh -b -p /usr/local/miniconda3
+ENV PATH=/usr/local/miniconda3/bin:$PATH
 RUN conda config --add channels defaults
 RUN conda config --add channels bioconda
 RUN conda config --add channels conda-forge
@@ -21,32 +20,41 @@ RUN conda config --add channels conda-forge
 RUN conda update conda
 RUN conda install -c bioconda metaphlan=3
 RUN conda create -n humann-3alpha metaphlan=3
+WORKDIR /tmp
 RUN git clone https://github.com/biobakery/humann.git
-WORKDIR /root/humann
+WORKDIR /tmp/humann
 RUN git checkout 3.0.0-alpha
 RUN python setup.py install
 
 ## install sratoolkit
-RUN mkdir /root/tmp
-WORKDIR /root/tmp
+RUN mkdir /tmp/sra
+WORKDIR /tmp/sra
 
 RUN curl -O https://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.10.5/setup-apt.sh
 RUN /bin/bash setup-apt.sh
 ENV PATH=/usr/local/ncbi/sra-tools/bin:$PATH
 
 ## pipeline run function
-WORKDIR /root
-COPY curatedMetagenomicData_pipeline.sh /root/
-RUN chmod a+rwx /root/curatedMetagenomicData_pipeline.sh
+WORKDIR /usr/local/bin
+COPY curatedMetagenomicData_pipeline.sh run_markers2.py /usr/local/bin/
+RUN chmod a+rx /usr/local/bin/curatedMetagenomicData_pipeline.sh /usr/local/bin/run_markers2.py
 
 ## interactive user settings workaround
 COPY usersettings /root/.ncbi/user-settings.mkfg
 
-RUN rm -rf /root/tmp /root/humann
+RUN rm -rf /tmp/sra /tmp/humann
 
 ## display versions
 RUN fastq-dump --version
 RUN metaphlan --version
 RUN humann3 --version
+
+## root directory for databases
+ENV mpa_dir=/usr/local/miniconda3/lib/python3.7/site-packages/metaphlan
+ENV metaphlandb="${mpa_dir}/metaphlan_databases"
+ENV humanndb=/usr/local/humann_databases
+ENV chocophlandir="${humanndb}/chocophlan"
+ENV unirefdir="${humanndb}/uniref"
+RUN mkdir $metaphlandb $humanndb
 
 WORKDIR /root

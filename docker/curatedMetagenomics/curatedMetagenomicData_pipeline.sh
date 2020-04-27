@@ -4,30 +4,56 @@
 
 ### before running this script, be sure that these tools are in your path
 # fastq-dump
-# humann2
+# humann3
 # metaphlan
 # python
 
 sample=$1
 runs=$2
 
-### before running this script, set these paths and variables
-pc=/dbs/humann/chocophlan # chocophlan database (nucleotide-database for humann, like /databases/chocophlan
-pp=/dbs/humann/uniref # uniref database (protein-database for humann, like /databases/uniref)
-pmdb=/opt/metaphlan2/biobakery-metaphlan2/db_v30_CHOCOPhlAn_201901/mpa_v30_CHOCOPhlAn_201901.pkl #metaphlan2 database (like /tools/metaphlan2/db_v20/mpa_v20_m200.pkl)
+### example docker command:
+# docker run -it -v /nobackup/16tb_b/biobakery.db/metaphlan:/usr/local/miniconda3/lib/python3.7/site-packages/metaphlan/metaphlan_databases -v /nobackup/16tb_b/biobakery.db/humann:/usr/local/humann_databases waldronlab/curatedmetagenomics
+
+### the default metaphlan directory is set by the $mpa_dir environment variable
+### in the waldronlab/curatedmetagenomics docker container this is:
+### /usr/local/miniconda3/lib/python3.7/site-packages/metaphlan
+metaphlandb="${mpa_dir}/metaphlan_databases"
+
+### Set a location for the humann data directory
+### This script assumes the humann data directory is set by the $humanndb environment variable
+### in the waldronlab/curatedmetagenomics docker container this is:
+### /usr/local/humann_datbases
+# humanndb="/usr/local/humanndb"
+chocophlandir="$humanndb/chocophlan" # chocophlan database directory (nucleotide-database for humann2, like /databases/chocophlan
+unirefdir="$humanndb/uniref" # uniref database directory (protein-database for humann2, like /databases/uniref)
+pmdb="${metaplhandb}/mpa_v296_CHOCOPhlAn_201901.pkl" #metaphlan2 database (like /usr/local/miniconda3/lib/python3.7/site-packages/metaphlan/metaphlan_databases/mpa/v296/CHOCOPhlAn_201901.pkl)
+
+## figure these out by doing `humann3_databases`
+urlprefix="http://huttenhower.sph.harvard.edu/humann2_data"
+
+unirefname="uniref90_annotated_v201901.tar.gz"
+unirefurl="${urlprefix}/uniprot/uniref_annotated/${unirefname}"
+#unirefurl="https://www.dropbox.com/s/yeur7nm7ej7spga/uniref90_annotated_v201901.tar.gz?dl=0"
+
+chocophlanname="uniref90_annotated_v201901.tar.gz"
+chocophlanurl="${urlprefix}/chocophlan/${chocophlanname}"
+#chocophlanurl="https://www.dropbox.com/s/das8hdof0zyuyh8/full_chocophlan.v296_201901.tar.gz?dl=0"
+
 ncores=2 #number of cores
 
-mkdir -p $pc
-mkdir -p $pp
+mkdir -p $chocophlandir
+mkdir -p $unirefdir
 
-if [ ! "$(ls -A $pp)" ]; then
-    wget https://storage.googleapis.com/curatedmetagenomicdata/dbs/uniref/uniref90_annotated_1_1.tar.gz
-    tar -xvz -C /dbs/humann/uniref/ -f uniref90_annotated_1_1.tar.gz
+if [ ! "$(ls -A $unirefdir)" ]; then
+    wget unirefurl
+    tar -xvz -C $unirefdir -f $unirefname
+    rm $unirefname
 fi
 
-if [ ! "$(ls -A $pc)" ]; then
-    wget https://storage.googleapis.com/curatedmetagenomicdata/dbs/chocophlan/full_chocophlan_plus_viral.v0.1.1.tar.gz  
-    tar -xvz -C /dbs/humann/chocophlan/ -f full_chocophlan_plus_viral.v0.1.1.tar.gz
+if [ ! "$(ls -A $chocophlandir)" ]; then
+    wget $chocophlanurl
+    tar -xvz -C $chocophlandir -f $chocophlanname
+    rm $chocophlanname
 fi
 
 
@@ -37,34 +63,20 @@ mkdir -p ${OUTPUT_PATH}
 
 cd ${OUTPUT_PATH}
 
-# while [ "$runs" ] ; do
-# 	iter=${runs%%;*}
-#         shortyone=$(echo "$iter" | cut -c1-3)
-#         shortytwo=$(echo "$iter" | cut -c1-6)
-# 	echo 'Starting downloading run '${iter}
-#         ${pa}bin/ascp -T -i ${pa}etc/asperaweb_id_dsa.openssh anonftp@ftp.ncbi.nlm.nih.gov:/sra/sra-instant/reads/ByRun/sra/${shortyone}/${shortytwo}/${iter}/${iter}.sra ${sample}/reads/
-# 	echo 'Dumping run '${iter}
-#         fastq-dump --split-files ${sample}/reads/${iter}.sra --outdir ${sample}/reads/
-#         [ "$runs" = "$iter" ] && \
-#         runs='' || \
-#         runs="${runs#*;}"
-# 	echo 'Finished downloading of run '${iter}
-# done
 fastq-dump --outdir reads $2
 echo 'Downloaded.'
 echo 'Concatenating runs...'
 cat reads/*.fastq > reads/${sample}.fastq
 
-mkdir -p humann
-echo 'Running humann'
-humann --input reads/${sample}.fastq --output humann --nucleotide-database ${pc} --protein-database ${pp} --threads=${ncores}
+mkdir -p humann2
+echo 'Running humann2'
+humann2 --input reads/${sample}.fastq --output humann2 --nucleotide-database ${chocophlandir} --protein-database ${unirefdir} --threads=${ncores}
 echo 'renorm_table runs'
 humann_renorm_table --input humann/${sample}_genefamilies.tsv --output humann/${sample}_genefamilies_relab.tsv --units relab
 humann_renorm_table --input humann/${sample}_pathabundance.tsv --output humann/${sample}_pathabundance_relab.tsv --units relab
 echo 'run_markers2.py'
-# NOTE: using absolute path here!!!
-python /root/run_markers2.py \
-    --input_dir humann/${sample}_humann_temp/ \
+run_markers2.py \
+    --input_dir humann2/${sample}_humann2_temp/ \
     --bt2_ext _metaphlan_bowtie2.txt \
     --metaphlan_db ${pmdb} \
     --output_dir humann \
