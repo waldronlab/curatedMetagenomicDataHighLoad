@@ -13,7 +13,7 @@ def read_params():
                    default='mpa_v30_CHOCOPhlAn_201901',
                    type=str)
     p.add_argument('--bt2_ext', required=False,
-                   default='.bowtie2_out.bz2',
+                   default='_metaphlan_bowtie2.txt',
                    type=str)
     p.add_argument('--input_dir', required=True, type=str)
     p.add_argument('--output_dir', required=True, type=str)
