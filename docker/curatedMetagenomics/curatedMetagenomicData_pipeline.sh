@@ -105,7 +105,6 @@ humann_renorm_table --input humann/${sample}_pathabundance.tsv --output humann/$
 echo 'run_markers2.py'
 run_markers2.py \
     --input_dir humann/${sample}_humann_temp/ \
-    --bt2_ext _metaphlan_bowtie2.txt \
     --metaphlan_db ${mdbn} \
     --output_dir humann \
     --nprocs ${ncores}
