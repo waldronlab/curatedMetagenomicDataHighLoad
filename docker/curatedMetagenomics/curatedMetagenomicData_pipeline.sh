@@ -36,10 +36,12 @@ urlprefix="http://huttenhower.sph.harvard.edu/humann2_data"
 
 unirefname="uniref90_annotated_v201901.tar.gz"
 unirefurl="${urlprefix}/uniprot/uniref_annotated/${unirefname}"
+DEMO_unirefurl="${urlprefix}/uniprot/uniref_annotated/uniref90_DEMO_diamond_v201901.tar.gz"
 #unirefurl="https://www.dropbox.com/s/yeur7nm7ej7spga/uniref90_annotated_v201901.tar.gz?dl=0"
 
 chocophlanname="full_chocophlan.v296_201901.tar.gz"
 chocophlanurl="${urlprefix}/chocophlan/${chocophlanname}"
+DEMO_chocophlanurl="${urlprefix}/chocophlan/${chocophlanname/full/DEMO}"
 #chocophlanurl="https://www.dropbox.com/s/das8hdof0zyuyh8/full_chocophlan.v296_201901.tar.gz?dl=0"
 
 ncores=2 #number of cores
