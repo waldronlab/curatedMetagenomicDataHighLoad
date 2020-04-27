@@ -5,11 +5,12 @@ import glob
 import sys
 import argparse 
 import multiprocessing
+import subprocess
 
 def read_params():
     p = argparse.ArgumentParser()
-    p.add_argument('--metaphlan_db', required=False, 
-                   default='metaphlan/db_v30_CHOCOPhlAn_201901/mpa_v30_CHOCOPhlAn_201901.pkl',
+    p.add_argument('--metaphlan_db_name', required=False, 
+                   default='mpa_v30_CHOCOPhlAn_201901',
                    type=str)
     p.add_argument('--bt2_ext', required=False,
                    default='.bowtie2_out.bz2',
@@ -23,10 +24,10 @@ def read_params():
 
 def run(cmd):
     print(cmd)
-    os.system(cmd)
+    subprocess.check_call(cmd.split(' '))
 
 def run_markers(args):
-    metaphlan_db = args['metaphlan_db']
+    metaphlan_db_name = args['metaphlan_db_name']
     input_dir = args['input_dir']
     bt2_ext = args['bt2_ext']
     nprocs = args['nprocs']
@@ -40,13 +41,13 @@ def run_markers(args):
     for ifn in ifns:
         for ana_type in ['rel_ab', 'marker_pres_table', 'marker_ab_table']:
             ofn = ifn.replace(bt2_ext, '.%s'%ana_type)
-            cmd = 'metaphlan --mpa_pkl {} --input_type bowtie2out {} -o '.format(metaphlan_db, ifn, ofn)
+            cmd = 'metaphlan --mpa_pkl {} --input_type bowtie2out {} -o '.format(metaphlan_db_name, ifn, ofn)
             if not os.path.isfile(ofn):
                 cmds.append(cmd)
 
             base_ofn = os.path.basename(ifn).replace(bt2_ext, '.%s'%ana_type)
             ofn = os.path.join(output_dir, base_ofn)
-            cmd = 'metaphlan --mpa_pkl {} --input_type bowtie2out {} {} -o '.format(metaphlan_db, params, ifn, ofn)
+            cmd = 'metaphlan --mpa_pkl {} --input_type bowtie2out {} {} -o '.format(metaphlan_db_name, params, ifn, ofn)
             if not os.path.isfile(ofn):
                 cmds.append(cmd)
 

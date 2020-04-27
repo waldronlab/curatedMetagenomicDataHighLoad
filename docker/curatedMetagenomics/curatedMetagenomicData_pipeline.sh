@@ -26,7 +26,7 @@ metaphlandb="${mpa_dir}/metaphlan_databases"
 # humanndb="/usr/local/humanndb"
 chocophlandir="$humanndb/chocophlan" # chocophlan database directory (nucleotide-database for humann2, like /databases/chocophlan
 unirefdir="$humanndb/uniref" # uniref database directory (protein-database for humann2, like /databases/uniref)
-pmdb="${metaplhandb}/mpa_v296_CHOCOPhlAn_201901.pkl" #metaphlan2 database (like /usr/local/miniconda3/lib/python3.7/site-packages/metaphlan/metaphlan_databases/mpa/v296/CHOCOPhlAn_201901.pkl)
+mdbn="mpa_v30_CHOCOPhlAn_201901" #metaphlan2 database (like /usr/local/miniconda3/lib/python3.7/site-packages/metaphlan/metaphlan_databases/mpa/v296/CHOCOPhlAn_201901.pkl)
 
 ## figure these out by doing `humann3_databases`
 urlprefix="http://huttenhower.sph.harvard.edu/humann2_data"
@@ -63,22 +63,28 @@ mkdir -p ${OUTPUT_PATH}
 
 cd ${OUTPUT_PATH}
 
-fastq-dump --outdir reads $2
+for run in ${runs//;/ }
+do
+	echo 'Dumping run '${run}
+    fasterq-dump --threads ${ncores} --split-files ${run} --outdir ${sample}/reads/
+    echo 'Finished downloading of run '${run}
+done
 echo 'Downloaded.'
+
 echo 'Concatenating runs...'
 cat reads/*.fastq > reads/${sample}.fastq
 
-mkdir -p humann2
-echo 'Running humann2'
-humann2 --input reads/${sample}.fastq --output humann2 --nucleotide-database ${chocophlandir} --protein-database ${unirefdir} --threads=${ncores}
+mkdir -p humann
+echo 'Running humann'
+humann --input reads/${sample}.fastq --output humann --nucleotide-database ${chocophlandir} --protein-database ${unirefdir} --threads=${ncores}
 echo 'renorm_table runs'
 humann_renorm_table --input humann/${sample}_genefamilies.tsv --output humann/${sample}_genefamilies_relab.tsv --units relab
 humann_renorm_table --input humann/${sample}_pathabundance.tsv --output humann/${sample}_pathabundance_relab.tsv --units relab
 echo 'run_markers2.py'
 run_markers2.py \
-    --input_dir humann2/${sample}_humann2_temp/ \
+    --input_dir humann/${sample}_humann_temp/ \
     --bt2_ext _metaphlan_bowtie2.txt \
-    --metaphlan_db ${pmdb} \
+    --metaphlan_db ${mdbn} \
     --output_dir humann \
     --nprocs ${ncores}
 
@@ -90,6 +96,6 @@ mkdir metaphlan_bugs_list; mv humann/${sample}_humann_temp/${sample}_metaphlan_b
 mkdir pathabundance; mv humann/${sample}_pathabundance.tsv pathabundance/${sample}.tsv;
 mkdir pathabundance_relab; mv humann/${sample}_pathabundance_relab.tsv pathabundance_relab/${sample}.tsv;
 mkdir pathcoverage; mv humann/${sample}_pathcoverage.tsv pathcoverage/${sample}.tsv;
-mkdir humann_temp; mv humann/${sample}_humann_temp/ humann_temp/ #comment this line if you don't want to keep humann2 temporary files
+mkdir humann_temp; mv humann/${sample}_humann_temp/ humann_temp/ #comment this line if you don't want to keep humann temporary files
 
 rm -r reads
