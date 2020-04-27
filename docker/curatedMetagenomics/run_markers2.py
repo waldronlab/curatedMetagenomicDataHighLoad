@@ -41,13 +41,13 @@ def run_markers(args):
     for ifn in ifns:
         for ana_type in ['rel_ab', 'marker_pres_table', 'marker_ab_table']:
             ofn = ifn.replace(bt2_ext, '.%s'%ana_type)
-            cmd = 'metaphlan --mpa_pkl {} --input_type bowtie2out {} -o '.format(metaphlan_db_name, ifn, ofn)
+            cmd = 'metaphlan --index {} --input_type bowtie2out {} -o '.format(metaphlan_db_name, ifn, ofn)
             if not os.path.isfile(ofn):
                 cmds.append(cmd)
 
             base_ofn = os.path.basename(ifn).replace(bt2_ext, '.%s'%ana_type)
             ofn = os.path.join(output_dir, base_ofn)
-            cmd = 'metaphlan --mpa_pkl {} --input_type bowtie2out {} {} -o '.format(metaphlan_db_name, params, ifn, ofn)
+            cmd = 'metaphlan --index {} --input_type bowtie2out {} {} -o '.format(metaphlan_db_name, params, ifn, ofn)
             if not os.path.isfile(ofn):
                 cmds.append(cmd)
 
