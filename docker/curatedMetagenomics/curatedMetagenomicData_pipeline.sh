@@ -70,7 +70,7 @@ if [ ! "$(ls -A $unirefdir)" ]; then
     rm $unirefname
 fi
 
-if [ ! "$(ls -A $chocophlandir)" ]; then+
+if [ ! "$(ls -A $chocophlandir)" ]; then
     wget $chocophlanurl
     tar -xvz -C $chocophlandir -f $chocophlanname
     rm $chocophlanname
