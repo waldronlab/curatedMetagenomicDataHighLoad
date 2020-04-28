@@ -1,7 +1,9 @@
 #!/bin/bash
 
-### usage: bash curatedMetagenomicData_pipeline.sh sample_name "SRRxxyxyxx;SRRyyxxyyx"
-### For testing usage: bash curatedMetagenomicData_pipeline.sh DEMO SRR042612 DEMO
+### usage: bash curatedMetagenomicData_pipeline.sh sample_name "SRRxxyxyxx;SRRyyxxyyx 2"
+### For testing usage: bash curatedMetagenomicData_pipeline.sh demosamplename SRR042612 2 DEMO
+### Third (optional, default=2) argument is the integer number of threads to be used.
+### If fourth argument is "DEMO" a test will be done.
 
 ### before running this script, be sure that these tools are in your path
 # fastq-dump
@@ -11,11 +13,17 @@
 
 sample=$1
 runs=$2
-run_demo=$3
+ncores=$3
+run_demo=$4
+
+if [ -z ${ncores}]; then
+    ncores=2
+fi
 
 ### example docker command:
 # OUTPUT_PATH=/nobackup/16tb_b/aaa
-# docker run -it -e OUTPUT_PATH=$OUTPUT_PATH -v /nobackup/16tb_b/biobakery.db/metaphlan:/usr/local/miniconda3/lib/python3.7/site-packages/metaphlan/metaphlan_databases -v /nobackup/16tb_b/biobakery.db/humann:/usr/local/humann_databases waldronlab/curatedmetagenomics
+# DB_PATH=/nobackup/16tb_b/biobakery.db
+# docker run -it -e OUTPUT_PATH=${OUTPUT_PATH} -v ${DB_PATH}/metaphlan:/usr/local/miniconda3/lib/python3.7/site-packages/metaphlan/metaphlan_databases -v ${DB_PATH}/humann:/usr/local/humann_databases waldronlab/curatedmetagenomics
 
 ### the default metaphlan directory is set by the $mpa_dir environment variable
 ### in the waldronlab/curatedmetagenomics docker container this is:
@@ -28,7 +36,7 @@ metaphlandb="${mpa_dir}/metaphlan_databases"
 ### Set a location for the humann data directory
 ### This script assumes the humann data directory is set by the $humanndb environment variable
 ### in the waldronlab/curatedmetagenomics docker container this is:
-### /usr/local/humann_datbases
+### /usr/local/humann_databases
 # humanndb="/usr/local/humanndb"
 chocophlandir="$humanndb/chocophlan" # chocophlan database directory (nucleotide-database for humann2, like /databases/chocophlan
 unirefdir="$humanndb/uniref" # uniref database directory (protein-database for humann2, like /databases/uniref)
@@ -38,18 +46,18 @@ mdbn="mpa_v30_CHOCOPhlAn_201901" #metaphlan2 database (like /usr/local/miniconda
 urlprefix="http://huttenhower.sph.harvard.edu/humann2_data"
 
 unirefname="uniref90_annotated_v201901.tar.gz"
+unirefurl="https://www.dropbox.com/s/yeur7nm7ej7spga/uniref90_annotated_v201901.tar.gz?dl=0"
+#unirefurl="${urlprefix}/uniprot/uniref_annotated/${unirefname}"
+
 DEMO_unirefname="uniref90_DEMO_diamond_v201901.tar.gz"
-unirefurl="${urlprefix}/uniprot/uniref_annotated/${unirefname}"
 DEMO_unirefurl="${urlprefix}/uniprot/uniref_annotated/${DEMO_unirefname}"
-#unirefurl="https://www.dropbox.com/s/yeur7nm7ej7spga/uniref90_annotated_v201901.tar.gz?dl=0"
 
 chocophlanname="full_chocophlan.v296_201901.tar.gz"
-DEMO_chocophlanname="DEMO_chocophlan.v296_201901.tar.gz"
-chocophlanurl="${urlprefix}/chocophlan/${chocophlanname}"
-DEMO_chocophlanurl="${urlprefix}/chocophlan/${DEMO_chocophlanname}"
-#chocophlanurl="https://www.dropbox.com/s/das8hdof0zyuyh8/full_chocophlan.v296_201901.tar.gz?dl=0"
+chocophlanurl="https://www.dropbox.com/s/das8hdof0zyuyh8/full_chocophlan.v296_201901.tar.gz?dl=0"
+#chocophlanurl="${urlprefix}/chocophlan/${chocophlanname}"
 
-ncores=2 #number of cores
+DEMO_chocophlanname="DEMO_chocophlan.v296_201901.tar.gz"
+DEMO_chocophlanurl="${urlprefix}/chocophlan/${DEMO_chocophlanname}"
 
 mkdir -p $chocophlandir
 mkdir -p $unirefdir
