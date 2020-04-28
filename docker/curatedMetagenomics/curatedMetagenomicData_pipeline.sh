@@ -1,9 +1,26 @@
 #!/bin/bash
 
-### usage: bash curatedMetagenomicData_pipeline.sh sample_name "SRRxxyxyxx;SRRyyxxyyx 2"
-### For testing usage: bash curatedMetagenomicData_pipeline.sh demosamplename SRR042612 2 DEMO
-### Third (optional, default=2) argument is the integer number of threads to be used.
-### If fourth argument is "DEMO" a test will be done.
+### usage: bash curatedMetagenomicData_pipeline.sh sample_name "SRRxxyxyxx;SRRyyxxyyx"
+### If third argument is "DEMO" a test will be done.
+
+### example of running docker and singularity. 
+## Set environment variables
+# OUTPUT_PATH=$(pwd)            # default is $(pwd)
+# ncores=2                      # default is 2
+# DB_PATH=${HOME}/biobakery.db  # only for mounting persistent database volume for Docker, otherwise databases written only within Docker container
+
+## Docker:
+# mkdir -p $DB_PATH
+# docker run -it -e OUTPUT_PATH=${OUTPUT_PATH} -e ncores=${ncores} -v ${DB_PATH}/metaphlan:/usr/local/miniconda3/lib/python3.7/site-packages/metaphlan/metaphlan_databases -v ${DB_PATH}/humann:/usr/local/humann_databases waldronlab/curatedmetagenomics
+
+## Singularity - note, the binding here does not actually allow you to write anything to /usr/local, 
+##     which will be a problem for database downloads if not using DEMO example. I don't yet have a fix for this.
+# singularity pull docker://waldronlab/curatedmetagenomics
+# mkdir -p $DB_PATH
+# singularity shell -B ${DB_PATH}/metaphlan:/usr/local/miniconda3/lib/python3.7/site-packages/metaphlan/metaphlan_databases -B ${DB_PATH}/humann:/usr/local/humann_databases curatedmetagenomics_latest.sif
+
+## Now run a demo
+# curatedMetagenomicData_pipeline.sh demosamplename SRR042612 DEMO
 
 ### before running this script, be sure that these tools are in your path
 # fastq-dump
@@ -13,17 +30,15 @@
 
 sample=$1
 runs=$2
-ncores=$3
-run_demo=$4
+run_demo=$3
 
 if [ -z ${ncores}]; then
     ncores=2
 fi
 
-### example docker command:
-# OUTPUT_PATH=/nobackup/16tb_b/aaa
-# DB_PATH=/nobackup/16tb_b/biobakery.db
-# docker run -it -e OUTPUT_PATH=${OUTPUT_PATH} -v ${DB_PATH}/metaphlan:/usr/local/miniconda3/lib/python3.7/site-packages/metaphlan/metaphlan_databases -v ${DB_PATH}/humann:/usr/local/humann_databases waldronlab/curatedmetagenomics
+if [ -z ${OUTPUT_PATH} ]; then
+    OUTPUT_PATH=$(pwd)
+fi
 
 ### the default metaphlan directory is set by the $mpa_dir environment variable
 ### in the waldronlab/curatedmetagenomics docker container this is:
@@ -91,7 +106,7 @@ cd ${OUTPUT_PATH}
 
 for run in ${runs//;/ }
 do
-	echo 'Dumping run '${run}
+    echo 'Dumping run '${run}
     fasterq-dump --threads ${ncores} --split-files ${run} --outdir reads
     echo 'Finished downloading of run '${run}
 done
@@ -99,9 +114,9 @@ echo 'Downloaded.'
 
 echo 'Concatenating runs...'
 if [ ${sample} == 'DEMO' ]; then
+    mkdir -p reads
     cat $hnn_dir/tests/data/demo.fastq > reads/${sample}.fastq
 else
-    mkdir -p reads
     cat reads/*.fastq > reads/${sample}.fastq
 fi
 
