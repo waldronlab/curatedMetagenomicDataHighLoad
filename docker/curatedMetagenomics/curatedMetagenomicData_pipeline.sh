@@ -101,6 +101,7 @@ echo 'Concatenating runs...'
 if [ ${sample} == 'DEMO' ]; then
     cat $hnn_dir/tests/data/demo.fastq > reads/${sample}.fastq
 else
+    mkdir -p reads
     cat reads/*.fastq > reads/${sample}.fastq
 fi
 
