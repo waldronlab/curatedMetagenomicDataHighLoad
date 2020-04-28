@@ -43,7 +43,9 @@ def run_markers(args):
         for ana_type in ['marker_pres_table', 'marker_ab_table']:
             base_ofn = os.path.basename(ifn).replace(bt2_ext, '.%s'%ana_type)
             ofn = os.path.join(output_dir, base_ofn)
-            cmd = 'metaphlan --index {} --input_type bowtie2out {} {} -o {}'.format(metaphlan_db_name, params, ifn, ofn)
+            cmd = 'metaphlan --index {} --input_type bowtie2out {} -o {}'.format(metaphlan_db_name, ifn, ofn)
+            if params:
+                cmd = '{} {}'.format(cmd, params)
             if not os.path.isfile(ofn):
                 cmds.append(cmd)
 
