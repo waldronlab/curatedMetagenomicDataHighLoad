@@ -1,13 +1,24 @@
 FROM ubuntu
 
-WORKDIR /opt
-
+ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update
+RUN apt-get -y upgrade
+RUN apt-get install -y python3
+RUN apt-get install -y curl
+RUN apt-get install -y git
 RUN apt-get install -y wget
 
-RUN wget --output-document sratoolkit.tar.gz http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/current/sratoolkit.current-ubuntu64.tar.gz
-RUN tar -xvzf sratoolkit.tar.gz
+## install sratoolkit
+RUN mkdir /tmp/sra
+WORKDIR /tmp/sra
+
+RUN curl -O https://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.10.5/setup-apt.sh
+RUN /bin/bash setup-apt.sh
+ENV PATH=/usr/local/ncbi/sra-tools/bin:$PATH
+
+## interactive user settings workaround
+COPY usersettings /root/.ncbi/user-settings.mkfg
+
+RUN rm -rf /tmp/sra
 
 WORKDIR /root
-
-ENV PATH "$PATH:/opt/sratoolkit.2.8.2-1-ubuntu64/bin"
