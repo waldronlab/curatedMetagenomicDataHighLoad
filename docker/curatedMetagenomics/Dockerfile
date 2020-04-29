@@ -19,11 +19,7 @@ RUN conda config --add channels conda-forge
 ## install metaphlan3 and humann3
 RUN conda update conda
 RUN conda install -c bioconda metaphlan=3 
-WORKDIR /tmp
-RUN git clone https://github.com/biobakery/humann.git
-WORKDIR /tmp/humann
-RUN git checkout 3.0.0-alpha-rename
-RUN python setup.py install
+RUN conda install -c biobakery humann 
 
 ## install sratoolkit
 RUN mkdir /tmp/sra
