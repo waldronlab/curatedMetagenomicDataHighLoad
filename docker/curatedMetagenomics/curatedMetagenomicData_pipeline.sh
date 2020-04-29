@@ -32,7 +32,7 @@ sample=$1
 runs=$2
 run_demo=$3
 
-if [ -z ${ncores}]; then
+if [ -z ${ncores} ]; then
     ncores=2
 fi
 
