@@ -23,7 +23,7 @@
 # curatedMetagenomicData_pipeline.sh demosamplename SRR042612 DEMO
 
 ### before running this script, be sure that these tools are in your path
-# fastq-dump
+# fasterq-dump
 # humann3
 # metaphlan
 # python
@@ -45,34 +45,25 @@ fi
 ### /usr/local/miniconda3/lib/python3.7/site-packages/metaphlan
 ### MetaPhlAn databases can be downloaded by running 
 ### metaphlan --install --index mpa_v20_m200
-### The previous command install the MetaPhlAn2 database
-metaphlandb="${mpa_dir}/metaphlan_databases"
+if [ -z ${metaphlandb} ]; then
+    metaphlandb="${mpa_dir}/metaphlan_databases"
+fi
 
 ### Set a location for the humann data directory
 ### This script assumes the humann data directory is set by the $humanndb environment variable
 ### in the waldronlab/curatedmetagenomics docker container this is:
 ### /usr/local/humann_databases
 # humanndb="/usr/local/humanndb"
-chocophlandir="$humanndb/chocophlan" # chocophlan database directory (nucleotide-database for humann2, like /databases/chocophlan
-unirefdir="$humanndb/uniref" # uniref database directory (protein-database for humann2, like /databases/uniref)
+if [ -z ${chocophlandir} ]; then
+    chocophlandir="$humanndb/chocophlan" # chocophlan database directory (nucleotide-database for humann2, like /databases/chocophlan
+fi
+
+if [ -z ${unirefdir} ]; then
+    unirefdir="$humanndb/uniref" # uniref database directory (protein-database for humann2, like /databases/uniref)
+fi
+
 mdbn="mpa_v30_CHOCOPhlAn_201901" #metaphlan2 database (like /usr/local/miniconda3/lib/python3.7/site-packages/metaphlan/metaphlan_databases/mpa/v296/CHOCOPhlAn_201901.pkl)
 
-## figure these out by doing `humann3_databases`
-urlprefix="http://huttenhower.sph.harvard.edu/humann2_data"
-
-unirefname="uniref90_annotated_v201901.tar.gz"
-unirefurl="https://www.dropbox.com/s/yeur7nm7ej7spga/uniref90_annotated_v201901.tar.gz?dl=0"
-#unirefurl="${urlprefix}/uniprot/uniref_annotated/${unirefname}"
-
-DEMO_unirefname="uniref90_DEMO_diamond_v201901.tar.gz"
-DEMO_unirefurl="${urlprefix}/uniprot/uniref_annotated/${DEMO_unirefname}"
-
-chocophlanname="full_chocophlan.v296_201901.tar.gz"
-chocophlanurl="https://www.dropbox.com/s/das8hdof0zyuyh8/full_chocophlan.v296_201901.tar.gz?dl=0"
-#chocophlanurl="${urlprefix}/chocophlan/${chocophlanname}"
-
-DEMO_chocophlanname="DEMO_chocophlan.v296_201901.tar.gz"
-DEMO_chocophlanurl="${urlprefix}/chocophlan/${DEMO_chocophlanname}"
 
 mkdir -p $chocophlandir
 mkdir -p $unirefdir
@@ -80,24 +71,30 @@ mkdir -p $unirefdir
 ## For testing purposes, use the reduced ChocoPhlAn and UniRef90 DEMO databases
 ## A small fastq will be downloaded and profiled
 if [ ${run_demo} == 'DEMO' ]; then
-    unirefname=${DEMO_unirefname}
-    unirefurl=${DEMO_unirefurl}
-
-    chocophlanname=${DEMO_chocophlanname}
-    chocophlanurl=${DEMO_chocophlanurl}
+    DEMO_unirefname="uniref90_DEMO_diamond_v201901.tar.gz"
+    DEMO_unirefurl="https://www.dropbox.com/s/xaisk05u4l822pl/uniref90_DEMO_diamond_v201901.tar.gz?dl=0"
+    DEMO_chocophlanname="DEMO_chocophlan.v296_201901.tar.gz"
+    DEMO_chocophlanurl="https://www.dropbox.com/s/66wgnzw0eo1z142/DEMO_chocophlan.v296_201901.tar.gz?dl=0"
+    wget $DEMO_unirefurl
+    tar -xvz -C $DEMO_unirefdir -f $DEMO_unirefname
+    rm $DEMO_unirefname
+    wget $DEMO_chocophlanurl
+    tar -xvz -C $DEMO_chocophlandir -f $DEMO_chocophlanname
+    rm $DEMO_chocophlanname    
 fi
 
 if [ ! "$(ls -A $unirefdir)" ]; then
-    wget $unirefurl
-    tar -xvz -C $unirefdir -f $unirefname
-    rm $unirefname
+    download_uniref.sh
 fi
 
 if [ ! "$(ls -A $chocophlandir)" ]; then
-    wget $chocophlanurl
-    tar -xvz -C $chocophlandir -f $chocophlanname
-    rm $chocophlanname
+    download_chocophlan.sh
 fi
+
+if [ ! "$(ls -A $metaphlandb)" ]; then
+    download_metaphlandb.sh
+fi
+
 
 echo "Working in ${OUTPUT_PATH}"
 mkdir -p ${OUTPUT_PATH}
@@ -122,7 +119,7 @@ fi
 
 mkdir -p humann
 echo 'Running humann'
-humann --input reads/${sample}.fastq --output humann --nucleotide-database ${chocophlandir} --protein-database ${unirefdir} --threads=${ncores}
+humann --input reads/${sample}.fastq --output humann --nucleotide-database ${chocophlandir} --protein-database ${unirefdir} --threads=${ncores} --bowtie2db $metaphlandb
 echo 'renorm_table runs'
 humann_renorm_table --input humann/${sample}_genefamilies.tsv --output humann/${sample}_genefamilies_relab.tsv --units relab
 humann_renorm_table --input humann/${sample}_pathabundance.tsv --output humann/${sample}_pathabundance_relab.tsv --units relab

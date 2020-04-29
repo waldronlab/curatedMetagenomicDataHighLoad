@@ -20,8 +20,6 @@ Setup to put databases in writeable places:
 export dbdir=${HOME}/biobakery_databases
 export metaphlandb=${dbdir}/metaphlan_databases
 export humanndb=${dbdir}/humann_databases
-export chocophlandir=${humanndb}/chocophlan
-export unirefdir=${humanndb}/uniref
 export OUTPUT_PATH=${HOME}/results
 export ncores=2
 mkdir -p $metaphlandb $humanndb
