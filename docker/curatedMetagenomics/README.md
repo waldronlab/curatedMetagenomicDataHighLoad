@@ -4,10 +4,51 @@ https://hub.docker.com/repository/docker/waldronlab/curatedmetagenomics
 
 ## Usage
 
+### Docker
 ```
 docker run -v /PATH_TO_WHERE_YOU_WANT_OUTPUT:/RUN_PATH_IN_CONTAINER -ti waldronlab/curatedmetagenomics curatedMetagenomicData_pipeline.sh SAMPLENAME SRA_ACCESSION
 # a runnable example, where big databases are stored on the host in `${HOME}/biobakery.db`, output goes to `/tmp/output`, and a small demo is run.
 export DB_PATH="${HOME}/biobakery.db"; docker run -ti -e ncores=2 -e OUTPUT_PATH=/tmp/containeroutput -v "/tmp/output:/tmp/containeroutput" -v ${DB_PATH}/metaphlan:/usr/local/miniconda3/lib/python3.7/site-packages/metaphlan/metaphlan_databases -v ${DB_PATH}/humann:/usr/local/humann_databases waldronlab/curatedmetagenomics curatedMetagenomicData_pipeline.sh TEST_SAMPLE ERR262957 DEMO
+```
+
+### Singularity
+
+(attempted, still have issues with permissions on /usr/local)
+
+Setup to put databases in writeable places:
+```bash
+export dbdir=${HOME}/biobakery_databases
+export metaphlandb=${dbdir}/metaphlan_databases
+export humanndb=${dbdir}/humann_databases
+export chocophlandir=${humanndb}/chocophlan
+export unirefdir=${humanndb}/uniref
+export OUTPUT_PATH=${HOME}/results
+export ncores=2
+mkdir -p $metaphlandb $humanndb
+```
+
+At my cluster there were problems because of unset locale:
+```bash
+export LANGUAGE=en_us
+export LC_ALL=C
+```
+
+Get the image (creates `curatedmetagenomics_latest.sif`). This works on the CUNY HPC with Singularity 3, but on some systems, setup may be more elaborate (see [issue](https://github.com/waldronlab/curatedMetagenomicDataHighLoad/issues/16))
+```
+singularity pull docker://waldronlab/curatedmetagenomics
+```
+
+Run:
+```bash
+singularity exec curatedmetagenomics_latest.sif curatedMetagenomicData_pipeline.sh TEST_SAMPLE ERR262957 DEMO
+```
+
+But getting a permissions error:
+```
+CRITICAL ERROR: Error executing: /usr/local/miniconda3/bin/metaphlan /tmp/containeroutput/humann/TEST_SAMPLE_humann_temp/tmp5tiebbjq/tmpzjbqieiy -t rel_ab -o /tmp/containeroutput/humann/TEST_SAMPLE_humann_temp/TEST_SAMPLE_metaphlan_bugs_list.tsv --input_type fastq --bowtie2out /tmp/containeroutput/humann/TEST_SAMPLE_humann_temp/TEST_SAMPLE_metaphlan_bowtie2.txt --nproc 2
+
+Error message returned from metaphlan :
+ERROR: The directory is not writeable: /usr/local/miniconda3/lib/python3.7/site-packages/metaphlan/metaphlan_databases. Please modify the permissions.
 ```
 
 ### on google genomics api
