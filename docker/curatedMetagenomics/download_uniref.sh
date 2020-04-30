@@ -24,7 +24,7 @@ fi
 unirefname="uniref90_annotated_v201901.tar.gz"
 
 if [ ${dbsource} == 'dropbox' ]; then
-    unirefurl="https://www.dropbox.com/s/yeur7nm7ej7spga/uniref90_annotated_v201901.tar.gz?dl=0"
+    unirefurl="https://www.dropbox.com/s/yeur7nm7ej7spga/${unirefname}?dl=1"
 fi
 
 if [ ${dbsource} == 'harvard' ]; then

@@ -23,7 +23,7 @@ fi
 chocophlanname="full_chocophlan.v296_201901.tar.gz"
 
 if [ ${dbsource} == 'dropbox' ]; then
-    chocophlanurl="https://www.dropbox.com/s/das8hdof0zyuyh8/full_chocophlan.v296_201901.tar.gz?dl=0"
+    chocophlanurl="https://www.dropbox.com/s/das8hdof0zyuyh8/${chocophlanname}?dl=1"
 fi
 
 if [ ${dbsource} == 'harvard' ]; then
