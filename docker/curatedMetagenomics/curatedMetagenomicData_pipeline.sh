@@ -81,6 +81,7 @@ if [ ${run_demo} == 'DEMO' ]; then
     wget $DEMO_chocophlanurl
     tar -xvz -C $DEMO_chocophlandir -f $DEMO_chocophlanname
     rm $DEMO_chocophlanname    
+    sample='DEMO'
 fi
 
 if [ ! "$(ls -A $unirefdir)" ]; then
