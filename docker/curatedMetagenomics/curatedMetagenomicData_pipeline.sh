@@ -62,9 +62,6 @@ if [ -z ${unirefdir} ]; then
     unirefdir="$humanndb/uniref" # uniref database directory (protein-database for humann2, like /databases/uniref)
 fi
 
-mdbn="mpa_v30_CHOCOPhlAn_201901" #metaphlan2 database (like /usr/local/miniconda3/lib/python3.7/site-packages/metaphlan/metaphlan_databases/mpa/v296/CHOCOPhlAn_201901.pkl)
-
-
 mkdir -p $chocophlandir
 mkdir -p $unirefdir
 
@@ -120,24 +117,20 @@ else
     cat reads/*.fastq > reads/${sample}.fastq
 fi
 
+mkdir -p metaphlan
+echo 'Running metaphlan'
+run_metaphlan.sh ${sample} ${ncores}
+
 mkdir -p humann
 echo 'Running humann'
-humann --input reads/${sample}.fastq --output humann --nucleotide-database ${chocophlandir} --protein-database ${unirefdir} --threads=${ncores} --bowtie2db $metaphlandb
-echo 'renorm_table runs'
-humann_renorm_table --input humann/${sample}_genefamilies.tsv --output humann/${sample}_genefamilies_relab.tsv --units relab
-humann_renorm_table --input humann/${sample}_pathabundance.tsv --output humann/${sample}_pathabundance_relab.tsv --units relab
-echo 'run_markers2.py'
-run_markers2.py \
-    --input_dir humann/${sample}_humann_temp/ \
-    --metaphlan_db ${mdbn} \
-    --output_dir humann \
-    --nprocs ${ncores}
+run_humann.sh $sample $ncores
+
+mkdir marker_abundance; mv metaphlan/${sample}.marker_ab_table marker_abundance/${sample}.tsv;
+mkdir marker_presence; mv metaphlan/${sample}.marker_pres_table marker_presence/${sample}.tsv;
+mkdir metaphlan_bugs_list; mv metaphlan/${sample}.tsv metaphlan_bugs_list/${sample}.tsv;
 
 mkdir genefamilies; mv humann/${sample}_genefamilies.tsv genefamilies/${sample}.tsv;
 mkdir genefamilies_relab; mv humann/${sample}_genefamilies_relab.tsv genefamilies_relab/${sample}.tsv;
-mkdir marker_abundance; mv humann/${sample}.marker_ab_table marker_abundance/${sample}.tsv;
-mkdir marker_presence; mv humann/${sample}.marker_pres_table marker_presence/${sample}.tsv;
-mkdir metaphlan_bugs_list; mv humann/${sample}_humann_temp/${sample}_metaphlan_bugs_list.tsv metaphlan_bugs_list/${sample}.tsv;
 mkdir pathabundance; mv humann/${sample}_pathabundance.tsv pathabundance/${sample}.tsv;
 mkdir pathabundance_relab; mv humann/${sample}_pathabundance_relab.tsv pathabundance_relab/${sample}.tsv;
 mkdir pathcoverage; mv humann/${sample}_pathcoverage.tsv pathcoverage/${sample}.tsv;
