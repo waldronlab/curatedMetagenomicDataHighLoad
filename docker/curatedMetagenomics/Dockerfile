@@ -30,8 +30,8 @@ RUN /bin/bash setup-apt.sh
 ENV PATH=/usr/local/ncbi/sra-tools/bin:$PATH
 
 ## pipeline run function
-COPY curatedMetagenomicData_pipeline.sh download_metaphlandb.sh download_chocophlan.sh download_uniref.sh run_markers2.py /usr/local/bin/
-RUN chmod a+rx /usr/local/bin/*.sh /usr/local/bin/run_markers2.py
+COPY curatedMetagenomicData_pipeline.sh download_metaphlandb.sh download_chocophlan.sh download_uniref.sh /usr/local/bin/
+RUN chmod a+rx /usr/local/bin/*.sh
 
 ## interactive user settings workaround
 COPY usersettings /root/.ncbi/user-settings.mkfg
