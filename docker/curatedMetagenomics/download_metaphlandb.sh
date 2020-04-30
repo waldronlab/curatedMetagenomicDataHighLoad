@@ -5,4 +5,4 @@
 # download_metaphlandb.sh
 
 mkdir -p $metaphlandb
-metaphlan --install --index mpa_v20_m200 --bowtie2db $metaphlandb
+metaphlan --install --index latest --bowtie2db $metaphlandb
