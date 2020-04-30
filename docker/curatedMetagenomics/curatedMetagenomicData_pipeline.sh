@@ -72,15 +72,17 @@ mkdir -p $unirefdir
 ## A small fastq will be downloaded and profiled
 if [ ${run_demo} == 'DEMO' ]; then
     DEMO_unirefname="uniref90_DEMO_diamond_v201901.tar.gz"
-    DEMO_unirefurl="https://www.dropbox.com/s/xaisk05u4l822pl/uniref90_DEMO_diamond_v201901.tar.gz?dl=0"
+    DEMO_unirefurl="https://www.dropbox.com/s/xaisk05u4l822pl/uniref90_DEMO_diamond_v201901.tar.gz?dl=1"
     DEMO_chocophlanname="DEMO_chocophlan.v296_201901.tar.gz"
-    DEMO_chocophlanurl="https://www.dropbox.com/s/66wgnzw0eo1z142/DEMO_chocophlan.v296_201901.tar.gz?dl=0"
-    wget $DEMO_unirefurl
-    tar -xvz -C $DEMO_unirefdir -f $DEMO_unirefname
+    DEMO_chocophlanurl="https://www.dropbox.com/s/66wgnzw0eo1z142/DEMO_chocophlan.v296_201901.tar.gz?dl=1"
+
+    wget $DEMO_unirefurl -O $DEMO_unirefname
+    tar -xvzf $DEMO_unirefname -C $unirefdir
     rm $DEMO_unirefname
-    wget $DEMO_chocophlanurl
-    tar -xvz -C $DEMO_chocophlandir -f $DEMO_chocophlanname
-    rm $DEMO_chocophlanname    
+    
+    wget $DEMO_chocophlanurl -O $DEMO_chocophlanname
+    tar -xvzf $DEMO_chocophlanname -C $chocophlandir 
+    rm $DEMO_chocophlanname
     sample='DEMO'
 fi
 
