@@ -13,7 +13,7 @@ metaphlan \
     --bowtie2db ${metaphlandb} \
     --samout metaphlan/${sample}.sam \
     --bowtie2out metaphlan/${sample}.bowtie2out \
-    --threads=${ncores} \
+    --nproc ${ncores} \
     -o metaphlan/${sample}.tsv \
     reads/${sample}.fastq
 
