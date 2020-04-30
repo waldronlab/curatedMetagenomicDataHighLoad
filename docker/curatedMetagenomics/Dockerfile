@@ -41,7 +41,7 @@ RUN rm -rf /tmp/sra /tmp/humann
 ## display versions
 RUN fastq-dump --version
 RUN metaphlan --version
-RUN humann3 --version
+RUN humann --version
 
 ## root directory for databases
 ENV mpa_dir=/usr/local/miniconda3/lib/python3.7/site-packages/metaphlan
