@@ -23,7 +23,7 @@ metaphlan \
     --bowtie2db ${metaphlandb} \
     -t marker_pres_table \
     -o metaphlan/${sample}.marker_pres_table \
-    reads/${sample}.fastq
+    metaphlan/${sample}.bowtie2out
 
 metaphlan \
     --input_type bowtie2out \
@@ -31,4 +31,4 @@ metaphlan \
     --bowtie2db ${metaphlandb} \
     -t marker_ab_table \
     -o metaphlan/${sample}.marker_ab_table \
-    reads/${sample}.fastq
+    metaphlan/${sample}.bowtie2out
