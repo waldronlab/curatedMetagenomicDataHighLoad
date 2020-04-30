@@ -121,6 +121,10 @@ mkdir -p metaphlan
 echo 'Running metaphlan'
 run_metaphlan.sh ${sample} ${ncores}
 
+mkdir -p strainphlan
+echo 'Running strainphlan'
+run_strainphlan.sh ${sample} ${ncores}
+
 mkdir -p humann
 echo 'Running humann'
 run_humann.sh $sample $ncores
@@ -128,6 +132,7 @@ run_humann.sh $sample $ncores
 mkdir marker_abundance; mv metaphlan/${sample}.marker_ab_table marker_abundance/${sample}.tsv;
 mkdir marker_presence; mv metaphlan/${sample}.marker_pres_table marker_presence/${sample}.tsv;
 mkdir metaphlan_bugs_list; mv metaphlan/${sample}.tsv metaphlan_bugs_list/${sample}.tsv;
+mkdir consensus_markers; mv strainphlan/${sample}.pkl consensus_markers/${sample}.pkl;
 
 mkdir genefamilies; mv humann/${sample}_genefamilies.tsv genefamilies/${sample}.tsv;
 mkdir genefamilies_relab; mv humann/${sample}_genefamilies_relab.tsv genefamilies_relab/${sample}.tsv;
