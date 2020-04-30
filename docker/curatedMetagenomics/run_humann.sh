@@ -15,7 +15,7 @@ humann \
     --nucleotide-database ${chocophlandir} \
     --taxonomic-profile metaphlan/${sample}.tsv \
     --protein-database ${unirefdir} \
-    --metaphlan-options '--bowtie2db $metaphlandb'
+    --metaphlan-options '--bowtie2db $metaphlandb' \
     --threads=${ncores}
 
 humann_renorm_table --input humann/${sample}_genefamilies.tsv --output humann/${sample}_genefamilies_relab.tsv --units relab
