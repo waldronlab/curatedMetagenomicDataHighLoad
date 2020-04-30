@@ -11,7 +11,7 @@ metaphlan \
     --input_type fastq \
     --index latest \
     --bowtie2db ${metaphlandb} \
-    --samout metaphlan/${sample}.sam \
+    --samout metaphlan/${sample}.sam.bz2 \
     --bowtie2out metaphlan/${sample}.bowtie2out \
     --nproc ${ncores} \
     -o metaphlan/${sample}.tsv \
