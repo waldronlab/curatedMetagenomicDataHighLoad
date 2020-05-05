@@ -7,6 +7,8 @@
 sample=$1
 ncores=$2
 
+mkdir consensus_markers
+
 sample2markers.py -i metaphlan/${sample}.sam.bz2 \
-    -o strainphlan \
+    -o consensus_markers \
     -n ${ncores}

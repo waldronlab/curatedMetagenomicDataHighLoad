@@ -13,10 +13,23 @@ humann \
     --input reads/${sample}.fastq \
     --output humann \
     --nucleotide-database ${chocophlandir} \
-    --taxonomic-profile metaphlan/${sample}.tsv \
+    --taxonomic-profile metaphlan_bugs_list/${sample}.tsv \
     --protein-database ${unirefdir} \
     --metaphlan-options '--bowtie2db $metaphlandb' \
     --threads=${ncores}
 
-humann_renorm_table --input humann/${sample}_genefamilies.tsv --output humann/${sample}_genefamilies_relab.tsv --units relab
-humann_renorm_table --input humann/${sample}_pathabundance.tsv --output humann/${sample}_pathabundance_relab.tsv --units relab
+mkdir genefamilies genefamilies_relab pathabundance pathabundance_relab pathcoverage
+
+mv humann/${sample}_genefamilies.tsv genefamilies/${sample}.tsv
+mv humann/${sample}_pathabundance.tsv pathabundance/${sample}.tsv
+mv humann/${sample}_pathcoverage.tsv pathcoverage/${sample}.tsv
+
+humann_renorm_table \
+    --input genefamilies/${sample}.tsv \
+    --output genefamilies_relab/${sample}.tsv \
+    --units relab
+
+humann_renorm_table \
+    --input pathabundance/${sample}.tsv \
+    --output pathabundance_relab/${sample}.tsv \
+    --units relab

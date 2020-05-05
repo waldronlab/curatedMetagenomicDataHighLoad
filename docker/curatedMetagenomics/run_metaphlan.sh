@@ -7,6 +7,8 @@
 sample=$1
 ncores=$2
 
+mkdir marker_abundance marker_presence metaphlan_bugs_list
+
 metaphlan \
     --input_type fastq \
     --index latest \
@@ -14,7 +16,7 @@ metaphlan \
     --samout metaphlan/${sample}.sam.bz2 \
     --bowtie2out metaphlan/${sample}.bowtie2out \
     --nproc ${ncores} \
-    -o metaphlan/${sample}.tsv \
+    -o metaphlan_bugs_list/${sample}.tsv \
     reads/${sample}.fastq
 
 metaphlan \
@@ -22,7 +24,7 @@ metaphlan \
     --index latest \
     --bowtie2db ${metaphlandb} \
     -t marker_pres_table \
-    -o metaphlan/${sample}.marker_pres_table \
+    -o marker_presence/${sample}.tsv \
     metaphlan/${sample}.bowtie2out
 
 metaphlan \
@@ -30,5 +32,5 @@ metaphlan \
     --index latest \
     --bowtie2db ${metaphlandb} \
     -t marker_ab_table \
-    -o metaphlan/${sample}.marker_ab_table \
+    -o marker_abundance/${sample}.tsv \
     metaphlan/${sample}.bowtie2out
