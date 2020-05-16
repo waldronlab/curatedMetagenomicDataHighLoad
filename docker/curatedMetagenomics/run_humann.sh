@@ -30,6 +30,16 @@ humann_renorm_table \
     --units relab
 
 humann_renorm_table \
+    --input genefamilies/${sample}.tsv \
+    --output genefamilies_cpm/${sample}.tsv \ ## edit
+    --units cpm
+
+humann_renorm_table \
     --input pathabundance/${sample}.tsv \
     --output pathabundance_relab/${sample}.tsv \
     --units relab
+
+humann_renorm_table \
+    --input pathabundance/${sample}.tsv \
+    --output pathabundance_cpm/${sample}.tsv \
+    --units cpm
