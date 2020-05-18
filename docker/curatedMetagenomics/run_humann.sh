@@ -18,7 +18,7 @@ humann \
     --metaphlan-options '--bowtie2db $metaphlandb' \
     --threads=${ncores}
 
-mkdir genefamilies genefamilies_relab pathabundance pathabundance_relab pathcoverage
+mkdir genefamilies genefamilies_relab genefamilies_cpm pathabundance pathabundance_relab pathcoverage pathabundance_cpm
 
 mv humann/${sample}_genefamilies.tsv genefamilies/${sample}.tsv
 mv humann/${sample}_pathabundance.tsv pathabundance/${sample}.tsv
