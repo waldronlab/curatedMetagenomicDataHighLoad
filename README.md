@@ -1,3 +1,6 @@
+# Overview
+
+Here is a high-level [slide deck](https://www.dropbox.com/s/tawgf4l49190m4o/2020-05-20%20intro%20to%20NCI%201U01%20CA230551%20.pptx?dl=0)
 
 # Major things done
 
