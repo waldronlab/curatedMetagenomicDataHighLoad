@@ -2,50 +2,12 @@
 import os
 import glob
 import sys
-import argparse as ap
 import subprocess as sb
-from urllib.request import urlretrieve
-import tarfile
+import shutil
+from utils import *
 
 __author__ = 'Francesco Beghini (francesco.beghini@unitn.it)'
 __date__ = 'May 26 2020'
-
-def read_params():
-    p = ap.ArgumentParser(description="")
-    p.add_argument( '--sample_name', 
-                    type=str, 
-                    required=True,
-                    help="Name of the sample")
-    p.add_argument( '--runs', 
-                    type=str, 
-                    required=True,
-                    help="Colon-separated list of SRR ids")
-    p.add_argument( '--demo', 
-                    action="store_true"
-                    help="If set, a DEMO sample will be profiled")
-    return p.parse_args()
-
-def make_folder(path):
-    if not os.path.isdir(path):
-        try:
-            os.makedirs(path)
-        except EnvironmentError:
-            sys.exit("ERROR: Unable to create folder {}".format(path))
-
-def download(url, file_path):
-    try:
-        sys.stderr.write("\nDownloading " + url + "\n")
-        file, headers = urlretrieve(url, file_path)
-    except EnvironmentError:
-        sys.stderr.write("\nWarning: Unable to download " + url + "\n")
-
-def decompress_tar(tar_file, destination):
-    try:
-        tarfile_handle = tarfile.open(tar_file)
-        tarfile_handle.extractall(path=destination)
-        tarfile_handle.close()
-    except EnvironmentError:
-        sys.stderr.write("Warning: Unable to extract {}.\n".format(tar_file))
 
 if __name__ == '__main__':
     args = read_params()
