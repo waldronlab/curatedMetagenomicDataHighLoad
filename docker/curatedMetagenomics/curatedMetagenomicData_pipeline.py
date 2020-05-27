@@ -78,5 +78,3 @@ if __name__ == '__main__':
             for fq_path in glob.glob('reads/*.fastq'):
                 with open(fq_path) as fq_file:
                     shutil.copyfileobj(fq_file, sample_file)
-
-    make_folder('metaphlan')

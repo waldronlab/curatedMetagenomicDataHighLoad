@@ -45,7 +45,7 @@ def decompress_tar(tar_file, destination):
 
 
 def run_metaphlan(sample, metaphlandb, ncores):
-    for d in ['marker_abundance', 'marker_presence', 'metaphlan_bugs_list']:
+    for d in ['metaphlan', 'marker_abundance', 'marker_presence', 'metaphlan_bugs_list']:
         make_folder(d)
     
     sb.check_call(
@@ -85,4 +85,18 @@ def run_strainphlan(sample, ncores):
                     '-n', ncores]
                 )
 
-def run_humann(sample, chocophlandir, unirefdir, metaphlandb, ncores)
+def run_humann(sample, chocophlandir, unirefdir, metaphlandb, ncores):
+    for d in ['humann','genefamilies','genefamilies_relab','genefamilies_cpm','pathabundance','pathabundance_relab','pathcoverage','pathabundance_cpm']:
+        make_folder(d)
+    
+    sb.check_call([ 'humann',
+                    '--input', os.path.join('reads', '{}.fastq'.format(sample)),
+                    '--output', 'humann',
+                    '--nucleotide-database', chocophlandir, 
+                    '--taxonomic-profile', os.path.join('metaphlan_bugs_list', '{}.tsv'.format(sample)),
+                    '--protein-database', unirefdir,
+                    '--metaphlan-options', '"--bowtie2db {}"'.format(metaphlandb), 
+                    '--threads', ncores]
+                )
+
+        
