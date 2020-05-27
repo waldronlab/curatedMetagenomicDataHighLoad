@@ -31,7 +31,7 @@ humann_renorm_table \
 
 humann_renorm_table \
     --input genefamilies/${sample}.tsv \
-    --output genefamilies_cpm/${sample}.tsv \ ## edit
+    --output genefamilies_cpm/${sample}.tsv \
     --units cpm
 
 humann_renorm_table \
