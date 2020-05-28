@@ -86,9 +86,6 @@ then
     exit 1
 fi
 
-mkdir -p $chocophlandir
-mkdir -p $unirefdir
-
 ## For testing purposes, use the reduced ChocoPhlAn and UniRef90 DEMO databases
 ## A small fastq will be downloaded and profiled
 if [ ${run_demo} == 'DEMO' ]
