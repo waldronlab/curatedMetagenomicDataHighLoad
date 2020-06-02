@@ -11,6 +11,8 @@ if [ -z ${unirefdir} ]; then
     exit 1
 fi
 
+mkdir -p $unirefdir
+
 if [ -z ${unirefname} ] || [ -z ${unirefurl} ]
 then
     echo '$unirefname and $unirefurl environment variables must be set. Exiting.'

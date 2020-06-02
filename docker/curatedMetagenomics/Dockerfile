@@ -45,10 +45,4 @@ RUN humann --version
 ## root directory for databases
 ENV mpa_dir=/usr/local/miniconda3/lib/python3.7/site-packages/metaphlan
 ENV hnn_dir=/usr/local/miniconda3/lib/python3.7/site-packages/humann
-ENV metaphlandb=/metaphlan_databases
-ENV humanndb=/humann_databases
-ENV chocophlandir="${humanndb}/chocophlan"
-ENV unirefdir="${humanndb}/uniref"
-RUN mkdir $metaphlandb $humanndb
-
 WORKDIR /root

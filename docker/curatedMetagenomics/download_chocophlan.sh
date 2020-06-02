@@ -11,6 +11,8 @@ if [ -z ${chocophlandir} ]; then
     exit 1
 fi
 
+mkdir -p $chocophlandir
+
 if [ -z ${chocophlanname} ] || [ -z ${chocophlanurl} ]
 then
     echo '$chocophlanname and $chocophlanurl environment variables must be set. Exiting.'
