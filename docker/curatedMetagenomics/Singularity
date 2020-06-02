@@ -4,6 +4,3 @@ From:waldronlab/curatedmetagenomics:latest
 %environment
     export LANGUAGE=en_us
     export LC_ALL=C
-
-%post
-    vdb-config --interactive
