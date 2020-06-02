@@ -5,3 +5,5 @@ From:waldronlab/curatedmetagenomics:latest
     export LANGUAGE=en_us
     export LC_ALL=C
 
+%setup
+    vdb-config --interactive
