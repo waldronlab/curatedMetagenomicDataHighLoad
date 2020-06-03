@@ -127,7 +127,7 @@ def run_strainphlan(sample_name, ncores):
     make_folder('consensus_markers')
     
     sb.check_call([ 'sample2markers.py', 
-                    '-i', os.path.join('metaphlan', '{}.sam.bz2'.format(sample)),
+                    '-i', os.path.join('metaphlan', '{}.sam.bz2'.format(sample_name)),
                     '-o', 'consensus_markers',
                     '-n', ncores]
                 )

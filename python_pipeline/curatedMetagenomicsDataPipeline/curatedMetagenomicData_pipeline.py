@@ -5,7 +5,7 @@ import glob
 import sys
 import subprocess as sb
 import shutil
-from .utils import make_folder, download_file, decompress_tar
+from .utils import make_folder, download_file, decompress_tar, run_metaphlan, run_humann, run_strainphlan
 
 __author__ = 'Francesco Beghini (francesco.beghini@unitn.it)'
 __date__ = 'May 26 2020'
@@ -88,4 +88,20 @@ def pipeline(sample_name, runs, ncores, output_path, demo):
                 with open(fq_path) as fq_file:
                     shutil.copyfileobj(fq_file, sample_file)
 
-    
+    if os.path.isfile(os.path.join('reads', '{}.fastq'.format(sample_name))):
+        click.echo('Running metaphlan')
+        run_metaphlan(sample_name, metaphlandb, ncores)
+    else:
+        sys.exit('MetaPhlAn execution has failed. Cannot find the input metagenome. Exiting.')
+
+    if os.path.isfile(os.path.join('metaphlan', '{}.sam.bz2'.format(sample_name)):
+        click.echo('Running strainphlan')
+        run_strainphlan(sample_name, ncores)
+    else:
+        sys.exit('MetaPhlAn execution has failed, the output SAM file is missing. StrainPhlAn can not be executed. Exiting.')
+
+    if os.path.isfile(os.path.join('metaphlan_bugs_list', '{}.tsv'.format(sample_name)):
+        click.echo('Running humann')
+        run_humann(sample_name, chocophlandir, unirefdir, metaphlandb, ncores)
+    else:
+        sys.exit('MetaPhlAn execution has failed, the output profile file is missing. HUMAnN can not be executed. Exiting.')
