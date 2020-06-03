@@ -3,7 +3,7 @@
 ## Usage (environment variable must be set before running the script)
 # export chocophlandir=${HOME}/biobakery_databases/humann/chocophlan
 # export chocophlanname="full_chocophlan.v296_201901.tar.gz"
-# export chocophlanurl="https://www.dropbox.com/s/das8hdof0zyuyh8/${chocophlanname}"
+# export chocophlanurl="https://www.dropbox.com/s/das8hdof0zyuyh8/${chocophlanname}?dl=0"
 # download_chocophlan.sh
 
 if [ -z ${chocophlandir} ]; then

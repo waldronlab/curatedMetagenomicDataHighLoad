@@ -88,6 +88,4 @@ def pipeline(sample_name, runs, ncores, output_path, demo):
                 with open(fq_path) as fq_file:
                     shutil.copyfileobj(fq_file, sample_file)
 
-
-if __name__ == '__main__':
-    pipeline()
+    
