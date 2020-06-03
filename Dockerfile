@@ -49,5 +49,6 @@ ENV metaphlandb=/metaphlan_databases
 ENV humanndb=/humann_databases
 ENV chocophlandir="${humanndb}/chocophlan"
 ENV unirefdir="${humanndb}/uniref"
-RUN mkdir $metaphlandb $humanndb $chocophlandir $unirefdir
+RUN mkdir $metaphlandb $humanndb
+
 WORKDIR /root

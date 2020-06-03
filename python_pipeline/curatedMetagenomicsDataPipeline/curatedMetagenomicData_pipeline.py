@@ -1,21 +1,30 @@
 #!/usr/bin/env python3
 import os
+import click
 import glob
 import sys
 import subprocess as sb
 import shutil
-from utils import *
+from .utils import make_folder, download_file, decompress_tar
 
 __author__ = 'Francesco Beghini (francesco.beghini@unitn.it)'
 __date__ = 'May 26 2020'
 
-if __name__ == '__main__':
-    args = read_params()
+@click.command()
+@click.argument('sample_name')
+@click.argument('runs')
+@click.option('--ncores', envvar='ncores', default=2, type=click.INT)
+@click.option('--demo', is_flag=True)
+@click.argument('output_path', envvar='OUTPUT_PATH', type=click.Path())
+def pipeline(sample_name, runs, ncores, output_path, demo):
+    """
+        Dump from SRA the colon-separated list of RUNS into a FASTQ file named after
+        SAMPLE_NAME and profile it with MetaPhlAn, StrainPhlAn, and HUMAnN
+    """
 
-    sample_name = args.sample
-    runs = args.runs.split(';')
-
-    ncores = os.environ.get('ncores', 2)
+    runs = runs.split(';')
+    print(output_path)
+    ncores = int(ncores)
     output_path = os.environ.get('OUTPUT_PATH', os.path.abspath(__file__))
     
     hnn_dir = os.environ.get('hnn_dir')
@@ -42,17 +51,17 @@ if __name__ == '__main__':
     else:
         make_folder(unirefdir)
 
-    if args.demo:
+    if demo:
         DEMO_unirefname="uniref90_DEMO_diamond_v201901.tar.gz"
         DEMO_unirefurl="https://www.dropbox.com/s/xaisk05u4l822pl/uniref90_DEMO_diamond_v201901.tar.gz?dl=1"
         DEMO_chocophlanname="DEMO_chocophlan.v296_201901.tar.gz"
         DEMO_chocophlanurl="https://www.dropbox.com/s/66wgnzw0eo1z142/DEMO_chocophlan.v296_201901.tar.gz?dl=1"
 
-        download(DEMO_unirefurl, DEMO_unirefname)
+        download_file(DEMO_unirefurl, DEMO_unirefname)
         decompress_tar(DEMO_unirefname, unirefdir)
         os.unlink(DEMO_unirefname)
 
-        download(DEMO_chocophlanurl, DEMO_chocophlanname)
+        download_file(DEMO_chocophlanurl, DEMO_chocophlanname)
         decompress_tar(DEMO_chocophlanname, chocophlandir)
         os.unlink(DEMO_chocophlanname)
     try:
@@ -71,10 +80,14 @@ if __name__ == '__main__':
     sys.stdout.write('Concatenating runs...\n')
 
     with open(os.path.join('reads', '{}.fastq'.format(sample_name)), 'w') as sample_file:
-        if args.demo:
+        if demo:
             with open('{}/tests/data/demo.fastq'.format(hnn_dir)) as demo_fasta:
                 shutil.copyfileobj(demo_fasta, sample_file)
         else:
             for fq_path in glob.glob('reads/*.fastq'):
                 with open(fq_path) as fq_file:
                     shutil.copyfileobj(fq_file, sample_file)
+
+
+if __name__ == '__main__':
+    pipeline()
