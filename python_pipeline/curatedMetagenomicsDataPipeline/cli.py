@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 import click
-from utils import download_file as _download_file
-from utils import download_metaphlan_databases as _download_metaphlan_databases
-from utils import download_chocophlan as _download_chocophlan
-from utils import download_uniref as _download_uniref
-from utils import run_metaphlan as _run_metaphlan
-from utils import run_strainphlan as _run_strainphlan
-from utils import run_humann as _run_humann
+from .utils import download_file as _download_file
+from .utils import download_metaphlan_databases as _download_metaphlan_databases
+from .utils import download_chocophlan as _download_chocophlan
+from .utils import download_uniref as _download_uniref
+from .utils import run_metaphlan as _run_metaphlan
+from .utils import run_strainphlan as _run_strainphlan
+from .utils import run_humann as _run_humann
 
 @click.group(help="Command-line suite utilities for curatedMetagenomicsData")
 def cmd_cli():

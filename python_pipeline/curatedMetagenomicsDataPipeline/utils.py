@@ -72,6 +72,7 @@ def decompress_tar(tar_file, destination):
         sys.stderr.write("Warning: Unable to extract {}.\n".format(tar_file))
 
 def download_metaphlan_databases(metaphlandb):
+    metaphlandb = os.path.expandvars(metaphlandb)
     sb.check_call(
     ['metaphlan',
     '--install', 
@@ -80,7 +81,10 @@ def download_metaphlan_databases(metaphlandb):
     ])
 
 def download_chocophlan(chocophlandir, chocophlanname, chocophlanurl):
+    chocophlandir = os.path.expandvars(chocophlandir)
+    chocophlanurl = os.path.expandvars(chocophlanurl)
     make_folder(chocophlandir)
+    
     if chocophlanurl.startswith("https://storage.googleapis.com") and shutil.which('gsutil') is not None:
         sb.check_call(['gsutil', 'cp', 'gs://humann2_data/'+ chocophlanname,  '.'])
     else:
@@ -89,6 +93,8 @@ def download_chocophlan(chocophlandir, chocophlanname, chocophlanurl):
     os.unlink(os.path.join(chocophlandir, chocophlanname))
 
 def download_uniref(unirefdir, unirefname, unirefurl):
+    unirefdir = os.path.expandvars(unirefdir)
+    unirefurl = os.path.expandvars(unirefurl)
     make_folder(unirefdir)
 
     if unirefurl.startswith("https://storage.googleapis.com") and shutil.which('gsutil') is not None:
@@ -99,6 +105,8 @@ def download_uniref(unirefdir, unirefname, unirefurl):
     os.unlink(os.path.join(unirefdir, unirefname))
 
 def run_metaphlan(sample_name, metaphlandb, output_path, ncores):
+    metaphlandb = os.path.expandvars(metaphlandb)
+    output_path = os.path.expandvars(output_path)
     for d in ['metaphlan', 'marker_abundance', 'marker_presence', 'metaphlan_bugs_list']:
         make_folder(os.path.join(output_path, d))
     
@@ -134,6 +142,7 @@ def run_metaphlan(sample_name, metaphlandb, output_path, ncores):
         sys.exit(1)
 
 def run_strainphlan(sample_name, output_path, ncores):
+    output_path = os.path.expandvars(output_path)
     make_folder(os.path.join(output_path, 'consensus_markers'))
     
     try:
@@ -146,6 +155,11 @@ def run_strainphlan(sample_name, output_path, ncores):
         sys.exit(1)
 
 def run_humann(sample_name, chocophlandir, unirefdir, metaphlandb, output_path, ncores):
+    output_path = os.path.expandvars(output_path)
+    metaphlandb = os.path.expandvars(metaphlandb)
+    chocophlandir = os.path.expandvars(chocophlandir)
+    unirefdir = os.path.expandvars(unirefdir)
+    
     for d in ['humann','genefamilies','genefamilies_relab','genefamilies_cpm','pathabundance','pathabundance_relab','pathcoverage','pathabundance_cpm']:
         make_folder(os.path.join(output_path, d))
     
