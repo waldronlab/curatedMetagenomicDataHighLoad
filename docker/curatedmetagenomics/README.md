@@ -13,8 +13,6 @@ export DB_PATH="${HOME}/biobakery.db"; docker run -ti -e ncores=2 -e OUTPUT_PATH
 
 ### Singularity
 
-(attempted, still have issues with permissions on /usr/local)
-
 Setup to put databases in writeable places:
 ```bash
 export dbdir=${HOME}/biobakery_databases
@@ -25,15 +23,10 @@ export ncores=2
 mkdir -p $metaphlandb $humanndb
 ```
 
-At my cluster there were problems because of unset locale:
-```bash
-export LANGUAGE=en_us
-export LC_ALL=C
-```
 
 Get the image (creates `curatedmetagenomics_latest.sif`). This works on the CUNY HPC with Singularity 3, but on some systems, setup may be more elaborate (see [issue](https://github.com/waldronlab/curatedMetagenomicDataHighLoad/issues/16))
 ```
-singularity pull docker://waldronlab/curatedmetagenomics
+singularity pull shub://waldronlab/curatedmetagenomics
 ```
 
 Run:
@@ -76,10 +69,10 @@ Currently, the `curagedMetagenomicData_pipeline.sh` script alternative publicly 
 
 ```
 unirefname="uniref90_annotated_v201901.tar.gz"
-unirefurl="https://www.dropbox.com/s/yeur7nm7ej7spga/uniref90_annotated_v201901.tar.gz?dl=0"
+unirefurl="https://www.dropbox.com/s/yeur7nm7ej7spga/uniref90_annotated_v201901.tar.gz?dl=1"
 
 chocophlanname="full_chocophlan.v296_201901.tar.gz"
-chocophlanurl="https://www.dropbox.com/s/das8hdof0zyuyh8/full_chocophlan.v296_201901.tar.gz?dl=0"
+chocophlanurl="https://www.dropbox.com/s/das8hdof0zyuyh8/full_chocophlan.v296_201901.tar.gz?dl=1"
 
 chocophlandir="$humanndb/chocophlan" # $humanndb is defined within Docker container
 unirefdir="$humanndb/uniref"
