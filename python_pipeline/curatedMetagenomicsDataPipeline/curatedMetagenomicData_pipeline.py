@@ -24,8 +24,8 @@ def pipeline(sample_name, runs, ncores, output_path, demo):
 
     runs = runs.split(';')
     ncores = int(ncores)
-    output_path = os.environ.get('OUTPUT_PATH', os.path.abspath(__file__))
-    print('Output folder is ' + output_path)
+    output_path = os.environ.get('OUTPUT_PATH', os.path.dirname(__file__))
+    sys.stdout.write('Output folder is ' + output_path + '\n')
 
     hnn_dir = os.environ.get('hnn_dir')
     if hnn_dir is None:
@@ -34,10 +34,6 @@ def pipeline(sample_name, runs, ncores, output_path, demo):
     metaphlandb = os.environ.get('metaphlandb')
     if metaphlandb is None:
         sys.exit('metaphlandb env environment variable must be set. Exiting.\n')
-
-    humanndb = os.environ.get('humanndb')
-    if humanndb is None:
-        sys.exit('humanndb env environment variable must be set. Exiting.\n')
         
     chocophlandir = os.environ.get('chocophlandir')
     if chocophlandir is None:

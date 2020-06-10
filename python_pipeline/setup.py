@@ -1,7 +1,7 @@
 import setuptools
 
 setuptools.setup(
-    name='curatedmetagenomicsdatapipelines',
+    name='curatedmetagenomicsdatapipeline',
     version='0.0.1',
     author='Francesco Beghini',
     author_email='francesco.beghini@unitn.it',
