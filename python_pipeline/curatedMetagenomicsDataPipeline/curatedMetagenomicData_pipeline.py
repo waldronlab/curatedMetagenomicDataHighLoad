@@ -25,23 +25,24 @@ def pipeline(sample_name, runs, ncores, output_path, demo):
     runs = runs.split(';')
     ncores = int(ncores)
     output_path = os.environ.get('OUTPUT_PATH', os.path.dirname(__file__))
+    output_path = os.path.expandvars(output_path)
     sys.stdout.write('Output folder is ' + output_path + '\n')
 
-    hnn_dir = os.environ.get('hnn_dir')
+    hnn_dir =  os.path.expandvars(os.environ.get('hnn_dir'))
     if hnn_dir is None:
         sys.exit('hnn_dir env environment variable must be set. Exiting.\n')
 
-    metaphlandb = os.environ.get('metaphlandb')
+    metaphlandb = os.path.expandvars(os.environ.get('metaphlandb'))
     if metaphlandb is None:
         sys.exit('metaphlandb env environment variable must be set. Exiting.\n')
         
-    chocophlandir = os.environ.get('chocophlandir')
+    chocophlandir = os.path.expandvars(os.environ.get('chocophlandir'))
     if chocophlandir is None:
         sys.exit('chocophlandir env environment variable must be set. Exiting.\n')
     else:
         make_folder(chocophlandir)
 
-    unirefdir = os.environ.get('unirefdir')
+    unirefdir = os.path.expandvars(os.environ.get('unirefdir'))
     if unirefdir is None:
         sys.exit('unirefdir env environment variable must be set. Exiting.')
     else:
