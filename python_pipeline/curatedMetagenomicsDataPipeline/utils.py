@@ -7,10 +7,7 @@ import shutil
 from urllib.request import urlretrieve
 import subprocess as sb
 import tarfile
-
-@click.group(help="Command-line suite utilities for curatedMetagenomicsData")
-def cli():
-    pass
+import time
 
 def make_folder(path):
     if not os.path.isdir(path):
@@ -19,19 +16,52 @@ def make_folder(path):
         except EnvironmentError:
             sys.exit("ERROR: Unable to create folder {}".format(path))
 
-@cli.group(help="Commands for downloading databases")
-def download():
-    pass
+def byte_to_megabyte(byte):
+    """
+    Convert byte value to megabyte
+    """
 
-@download.command('download_file', help='Download a file in a choosen destination')
-@click.argument('url')
-@click.argument('file_path')
+    return byte / (1024.0**2)
+
+class ReportHook():
+    def __init__(self):
+        self.start_time = time.time()
+
+    def report(self, blocknum, block_size, total_size):
+        """
+        Print download progress message
+        """
+
+        if blocknum == 0:
+            self.start_time = time.time()
+            if total_size > 0:
+                sys.stderr.write("Downloading file of size: {:.2f} MB\n"
+                                 .format(byte_to_megabyte(total_size)))
+        else:
+            total_downloaded = blocknum * block_size
+            status = "{:3.2f} MB ".format(byte_to_megabyte(total_downloaded))
+
+            if total_size > 0:
+                percent_downloaded = total_downloaded * 100.0 / total_size
+                # use carriage return plus sys.stderr to overwrite stderr
+                download_rate = total_downloaded / (time.time() - self.start_time)
+                estimated_time = (total_size - total_downloaded) / download_rate
+                estimated_minutes = int(estimated_time / 60.0)
+                estimated_seconds = estimated_time - estimated_minutes * 60.0
+                status += ("{:3.2f} %  {:5.2f} MB/sec {:2.0f} min {:2.0f} sec "
+                           .format(percent_downloaded,
+                                   byte_to_megabyte(download_rate),
+                                   estimated_minutes, estimated_seconds))
+
+            status += "        \r"
+            sys.stderr.write(status)
+
 def download_file(url, file_path):
-    # try:
-    sys.stderr.write("\nDownloading " + url + "\n")
-    file, headers = urlretrieve(url, file_path)
-    # except EnvironmentError:
-        # sys.stderr.write("\nWarning: Unable to download " + url + "\n")
+    try:
+        sys.stderr.write("\nDownloading " + url + "\n")
+        file, headers = urlretrieve(url, file_path, reporthook=ReportHook().report)
+    except EnvironmentError:
+        sys.stderr.write("\nWarning: Unable to download " + url + "\n")
 
 def decompress_tar(tar_file, destination):
     try:
@@ -41,8 +71,6 @@ def decompress_tar(tar_file, destination):
     except EnvironmentError:
         sys.stderr.write("Warning: Unable to extract {}.\n".format(tar_file))
 
-@download.command('metaphlan_database', help='Download and install the latest available MetaPhlAn database')
-@click.argument('metaphlandb', envvar='metaphlandb', type=click.Path())
 def download_metaphlan_databases(metaphlandb):
     sb.check_call(
     ['metaphlan',
@@ -51,107 +79,102 @@ def download_metaphlan_databases(metaphlandb):
     '--bowtie2db', metaphlandb
     ])
 
-@download.command('chocophlan', help='Download annotated CHOCOPhlAn pangenomes')
-@click.argument('chocophlandir', envvar='chocophlandir')
-@click.argument('chocophlanname', envvar='chocophlanname', type=click.File('w'))
-@click.argument('chocophlanurl', envvar='chocophlanurl')
 def download_chocophlan(chocophlandir, chocophlanname, chocophlanurl):
     make_folder(chocophlandir)
-    
     if chocophlanurl.startswith("https://storage.googleapis.com") and shutil.which('gsutil') is not None:
         sb.check_call(['gsutil', 'cp', 'gs://humann2_data/'+ chocophlanname,  '.'])
     else:
-        download_file(chocophlanurl, os.path.join(os.path.abspath(__file__), chocophlanname.name))
-    decompress_tar(os.path.join(os.path.abspath(__file__), chocophlanname.name), chocophlandir)
-    os.unlink(os.path.join(os.path.abspath(__file__), chocophlanname.name))
+        download_file(chocophlanurl, os.path.join(chocophlandir, chocophlanname))
+    decompress_tar(os.path.join(chocophlandir, chocophlanname), chocophlandir)
+    os.unlink(os.path.join(chocophlandir, chocophlanname))
 
-@download.command('uniref', help='Download UniRef database')
-@click.argument('unirefdir', envvar='unirefdir', type=click.Path())
-@click.argument('unirefname', envvar='unirefname')
-@click.argument('unirefurl', envvar='unirefurl')
 def download_uniref(unirefdir, unirefname, unirefurl):
     make_folder(unirefdir)
 
     if unirefurl.startswith("https://storage.googleapis.com") and shutil.which('gsutil') is not None:
         sb.check_call(['gsutil', 'cp', 'gs://humann2_data/'+ unirefname,  '.'])
     else:
-        download_file(unirefurl, os.path.join(os.path.abspath(__file__), unirefname))
-    decompress_tar(os.path.join(os.path.abspath(__file__), unirefname), unirefdir)
-    os.unlink(os.path.join(os.path.abspath(__file__), unirefname))
+        download_file(unirefurl, os.path.join(unirefdir, unirefname))
+    decompress_tar(os.path.join(unirefdir, unirefname), unirefdir)
+    os.unlink(os.path.join(unirefdir, unirefname))
 
-
-@cli.group(help="Commands for running profiling tools")
-def run():
-    pass
-
-@run.command('metaphlan', help='Run MetaPhlAn on a sample')
-@click.argument('sample_name')
-@click.argument('metaphlandb', envvar='metaphlandb')
-@click.argument('ncores', envvar='ncores', default=2, type=click.INT)
-def run_metaphlan(sample_name, metaphlandb, ncores):
+def run_metaphlan(sample_name, metaphlandb, output_path, ncores):
     for d in ['metaphlan', 'marker_abundance', 'marker_presence', 'metaphlan_bugs_list']:
-        make_folder(d)
+        make_folder(os.path.join(output_path, d))
     
-    sb.check_call(
-    ['metaphlan',
-    '--input_type', 'fastq','--index', 'latest',
-    '--bowtie2db', metaphlandb,
-    '--samout', os.path.join('metaphlan', '{}.sam.bz2'.format(sample_name)),
-    '--bowtie2out',  os.path.join('metaphlan', '{}.bowtie2out'.format(sample_name)),
-    '--nproc', ncores,
-    '-o', os.path.join('metaphlan_bugs_list', '{}.tsv'.format(sample_name)),
-    os.path.join('reads', '{}.fastq'.format(sample_name))])
+    try:
+        sb.check_call(
+        ['metaphlan',
+        '--input_type', 'fastq','--index', 'latest',
+        '--bowtie2db', metaphlandb,
+        '--samout', os.path.join(output_path, 'metaphlan', '{}.sam.bz2'.format(sample_name)),
+        '--bowtie2out',  os.path.join(output_path, 'metaphlan', '{}.bowtie2out'.format(sample_name)),
+        '--nproc', str(ncores),
+        '-o', os.path.join(output_path, 'metaphlan_bugs_list', '{}.tsv'.format(sample_name)),
+        os.path.join(output_path, 'reads', '{}.fastq'.format(sample_name))])
 
-    sb.check_call(
-    ['metaphlan',
-    '--input_type', 'bowtie2out','--index', 'latest',
-    '--bowtie2db', metaphlandb,
-    '-t', 'marker_pres_table',
-    '-o', os.path.join('marker_presence', '{}.tsv'.format(sample_name)),
-    os.path.join('metaphlan', '{}.bowtie2out'.format(sample_name))
-    ])
+        sb.check_call(
+        ['metaphlan',
+        '--input_type', 'bowtie2out','--index', 'latest',
+        '--bowtie2db', metaphlandb,
+        '-t', 'marker_pres_table',
+        '-o', os.path.join(output_path, 'marker_presence', '{}.tsv'.format(sample_name)),
+        os.path.join(output_path, 'metaphlan', '{}.bowtie2out'.format(sample_name))
+        ])
+        
+        sb.check_call(
+        ['metaphlan',
+        '--input_type', 'bowtie2out', '--index', 'latest',
+        '--bowtie2db', metaphlandb,
+        '-t', 'marker_ab_table',
+        '-o', os.path.join(output_path, 'marker_abundance', '{}.tsv'.format(sample_name)),
+        os.path.join(output_path, 'metaphlan', '{}.bowtie2out'.format(sample_name))
+        ])
+    except sb.CalledProcessError as e:
+        sys.exit(1)
+
+def run_strainphlan(sample_name, output_path, ncores):
+    make_folder(os.path.join(output_path, 'consensus_markers'))
     
-    sb.check_call(
-    ['metaphlan',
-    '--input_type', 'bowtie2out', '--index', 'latest',
-    '--bowtie2db', metaphlandb,
-    '-t', 'marker_ab_table',
-    '-o', os.path.join('marker_abundance', '{}.tsv'.format(sample_name)),
-    os.path.join('metaphlan', '{}.bowtie2out'.format(sample_name))
-    ])
+    try:
+        sb.check_call([ 'sample2markers.py', 
+                        '-i', os.path.join(output_path, 'metaphlan', '{}.sam.bz2'.format(sample_name)),
+                        '-o', os.path.join(output_path, 'consensus_markers'),
+                        '-n', str(ncores)]
+                    )
+    except sb.CalledProcessError as e:
+        sys.exit(1)
 
-@run.command('strainphlan', help='Run StrainPhlAn on a sample')
-@click.argument('sample_name')
-@click.argument('ncores', envvar='ncores', default=2, type=click.INT)
-def run_strainphlan(sample_name, ncores):
-    make_folder('consensus_markers')
-    
-    sb.check_call([ 'sample2markers.py', 
-                    '-i', os.path.join('metaphlan', '{}.sam.bz2'.format(sample_name)),
-                    '-o', 'consensus_markers',
-                    '-n', ncores]
-                )
-
-
-@run.command('humann', help='Run HUMAnN on a sample')
-@click.argument('sample_name')
-@click.argument('chocophlandir', envvar='chocophlandir')
-@click.argument('unirefdir', envvar='unirefdir')
-@click.argument('metaphlandb', envvar='metaphlandb')
-@click.argument('ncores', envvar='ncores', default=2, type=click.INT)
-def run_humann(sample_name, chocophlandir, unirefdir, metaphlandb, ncores):
+def run_humann(sample_name, chocophlandir, unirefdir, metaphlandb, output_path, ncores):
     for d in ['humann','genefamilies','genefamilies_relab','genefamilies_cpm','pathabundance','pathabundance_relab','pathcoverage','pathabundance_cpm']:
-        make_folder(d)
+        make_folder(os.path.join(output_path, d))
     
-    sb.check_call([ 'humann',
-                    '--input', os.path.join('reads', '{}.fastq'.format(sample_name)),
-                    '--output', 'humann',
-                    '--nucleotide-database', chocophlandir, 
-                    '--taxonomic-profile', os.path.join('metaphlan_bugs_list', '{}.tsv'.format(sample_name)),
-                    '--protein-database', unirefdir,
-                    '--metaphlan-options', '"--bowtie2db {}"'.format(metaphlandb), 
-                    '--threads', ncores]
-                )
+    try:
+        sb.check_call([ 'humann',
+                        '--input', os.path.join(output_path, 'reads', '{}.fastq'.format(sample_name)),
+                        '--output', os.path.join(output_path,'humann'),
+                        '--nucleotide-database', chocophlandir, 
+                        '--taxonomic-profile', os.path.join(output_path, 'metaphlan_bugs_list', '{}.tsv'.format(sample_name)),
+                        '--protein-database', unirefdir,
+                        '--metaphlan-options', '"--bowtie2db {}"'.format(metaphlandb), 
+                        '--threads', str(ncores)]
+                    )
+    except sb.CalledProcessError as e:
+        sys.exit(1)
+    
+    shutil.move(os.path.join(output_path,'humann', '{}_genefamilies.tsv'.format(sample_name)), os.path.join(output_path, 'genefamilies', '{}.tsv'.format(sample_name)))
+    shutil.move(os.path.join(output_path,'humann', '{}_pathabundance.tsv'.format(sample_name)), os.path.join(output_path, 'pathabundance', '{}.tsv'.format(sample_name)))
+    shutil.move(os.path.join(output_path,'humann', '{}_pathcoverage.tsv'.format(sample_name)), os.path.join(output_path, 'pathcoverage', '{}.tsv'.format(sample_name)))
 
-if __name__ == '__main__':
-    cli()
+    sys.stdout.write('Normalizing HUMAnN output...\n')
+
+    for norm in ['cpm', 'relab']:
+        for input_type in ['genefamilies', 'pathabundance']:
+            try:
+                sb.check_call([ 'humann_renorm_table',
+                                '--input', os.path.join(output_path, input_type, '{}.tsv'.format(sample_name)),
+                                '--output', os.path.join(output_path, '{}_{}'.format(input_type, norm), '{}.tsv'.format(sample_name)),
+                                '--units', norm]
+                            )
+            except sb.CalledProcessError as e:
+                sys.exit('Failed to {} normalize {} file for sample {}'.format_map(norm, input_type, sample_name))
