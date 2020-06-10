@@ -13,7 +13,7 @@ __date__ = 'May 26 2020'
 @click.command()
 @click.argument('sample_name')
 @click.argument('runs')
-@click.option('--ncores', envvar='ncores', default=2, type=click.INT)
+@click.option('--ncores', envvar='ncores', default="2")
 @click.option('--demo', is_flag=True)
 @click.argument('output_path', envvar='OUTPUT_PATH', type=click.Path())
 def pipeline(sample_name, runs, ncores, output_path, demo):
@@ -23,10 +23,10 @@ def pipeline(sample_name, runs, ncores, output_path, demo):
     """
 
     runs = runs.split(';')
-    print(output_path)
     ncores = int(ncores)
     output_path = os.environ.get('OUTPUT_PATH', os.path.abspath(__file__))
-    
+    print('Output folder is ' + output_path)
+
     hnn_dir = os.environ.get('hnn_dir')
     if hnn_dir is None:
         sys.exit('hnn_dir env environment variable must be set. Exiting.\n')
@@ -52,6 +52,8 @@ def pipeline(sample_name, runs, ncores, output_path, demo):
         make_folder(unirefdir)
 
     if demo:
+        sample_name = 'DEMO'
+        click.echo('Downloading DEMO databases')
         DEMO_unirefname="uniref90_DEMO_diamond_v201901.tar.gz"
         DEMO_unirefurl="https://www.dropbox.com/s/xaisk05u4l822pl/uniref90_DEMO_diamond_v201901.tar.gz?dl=1"
         DEMO_chocophlanname="DEMO_chocophlan.v296_201901.tar.gz"
@@ -69,39 +71,48 @@ def pipeline(sample_name, runs, ncores, output_path, demo):
     except:
         sys.exit('fasterq-dump is not present in the system path. Exiting.\n')
 
-    make_folder('reads')
+    make_folder(os.path.join(output_path,'reads'))
            
     for run in runs:
         sys.stdout.write('Dumping run {}\n'.format(run))
-        sb.check_call(['fasterq-dump', '--threads', ncores, '--split-files', run, '--outdir', 'reads'], stderr=sb.DEVNULL, stdout=sb.DEVNULL)
+        sb.check_call([ 'fasterq-dump', 
+                        '-t', output_path, 
+                        '--force', 
+                        '--threads', str(ncores), 
+                        '--split-files', run, 
+                        '--outdir', os.path.join(output_path,'reads')
+                    ])
         sys.stdout.write('Finished downloading of run {}\n'.format(run))
 
     sys.stdout.write('Downloaded all runs.\n')
     sys.stdout.write('Concatenating runs...\n')
 
-    with open(os.path.join('reads', '{}.fastq'.format(sample_name)), 'w') as sample_file:
+    with open(os.path.join(output_path, 'reads', '{}.fastq'.format(sample_name)), 'w') as sample_file:
         if demo:
             with open('{}/tests/data/demo.fastq'.format(hnn_dir)) as demo_fasta:
                 shutil.copyfileobj(demo_fasta, sample_file)
         else:
-            for fq_path in glob.glob('reads/*.fastq'):
+            for fq_path in glob.glob(os.path.join(output_path, 'reads', '*.fastq')):
                 with open(fq_path) as fq_file:
                     shutil.copyfileobj(fq_file, sample_file)
 
-    if os.path.isfile(os.path.join('reads', '{}.fastq'.format(sample_name))):
+    if os.path.isfile(os.path.join(output_path, 'reads', '{}.fastq'.format(sample_name))):
         click.echo('Running metaphlan')
-        run_metaphlan(sample_name, metaphlandb, ncores)
+        run_metaphlan(sample_name, metaphlandb, output_path, ncores)
     else:
         sys.exit('MetaPhlAn execution has failed. Cannot find the input metagenome. Exiting.')
 
-    if os.path.isfile(os.path.join('metaphlan', '{}.sam.bz2'.format(sample_name)):
+    if os.path.isfile(os.path.join(output_path, 'metaphlan', '{}.sam.bz2'.format(sample_name))):
         click.echo('Running strainphlan')
-        run_strainphlan(sample_name, ncores)
+        run_strainphlan(sample_name, output_path, ncores)
     else:
         sys.exit('MetaPhlAn execution has failed, the output SAM file is missing. StrainPhlAn can not be executed. Exiting.')
 
-    if os.path.isfile(os.path.join('metaphlan_bugs_list', '{}.tsv'.format(sample_name)):
+    if os.path.isfile(os.path.join(output_path, 'metaphlan_bugs_list', '{}.tsv'.format(sample_name))):
         click.echo('Running humann')
-        run_humann(sample_name, chocophlandir, unirefdir, metaphlandb, ncores)
+        run_humann(sample_name, chocophlandir, unirefdir, metaphlandb, output_path, ncores)
     else:
         sys.exit('MetaPhlAn execution has failed, the output profile file is missing. HUMAnN can not be executed. Exiting.')
+
+    for f in ['humann', 'reads']:
+        shutil.rmtree(os.path.join(output_path, f))
