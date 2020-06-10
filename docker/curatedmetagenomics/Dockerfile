@@ -15,10 +15,11 @@ RUN conda config --add channels defaults
 RUN conda config --add channels bioconda
 RUN conda config --add channels conda-forge
 
-## install metaphlan3 and humann3
+## install metaphlan3, humann3, and the curatedMetagenomics pipeline
 RUN conda update conda
 RUN conda install -c bioconda metaphlan=3 
 RUN conda install -c biobakery humann 
+RUN pip install curatedmetagenomicspipeline
 
 ## install sratoolkit
 RUN mkdir /tmp/sra
@@ -28,14 +29,14 @@ RUN curl -O https://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.10.5/setup-apt.sh
 RUN /bin/bash setup-apt.sh
 ENV PATH=/usr/local/ncbi/sra-tools/bin:$PATH
 
-## pipeline run function
-COPY curatedMetagenomicData_pipeline.sh download_metaphlandb.sh download_chocophlan.sh download_uniref.sh run_humann.sh run_metaphlan.sh run_strainphlan.sh /usr/local/bin/
-RUN chmod a+rx /usr/local/bin/*.sh
+# ## pipeline run function
+# COPY curatedMetagenomicData_pipeline.sh download_metaphlandb.sh download_chocophlan.sh download_uniref.sh run_humann.sh run_metaphlan.sh run_strainphlan.sh /usr/local/bin/
+# RUN chmod a+rx /usr/local/bin/*.sh
 
 ## interactive user settings workaround
 COPY usersettings /root/.ncbi/user-settings.mkfg
 
-RUN rm -rf /tmp/sra /tmp/humann
+RUN rm -rf /tmp/sra
 
 ## display versions
 RUN fastq-dump --version
