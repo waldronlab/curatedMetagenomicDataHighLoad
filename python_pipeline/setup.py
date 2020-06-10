@@ -1,16 +1,16 @@
 import setuptools
 
 setuptools.setup(
-    name='curatedMetagenomicsData',
+    name='curatedmetagenomicsdatapipelines',
     version='0.0.1',
     author='Francesco Beghini',
     author_email='francesco.beghini@unitn.it',
-    url='https://github.com/waldronlab/curatedMetagenomicDataHighLoad',
+    url='https://github.com/waldronlab/curatedmetagenomics',
     packages=setuptools.find_namespace_packages(),
     entry_points={
         'console_scripts': [
-            'curatedMetagenomicsData_pipeline = curatedMetagenomicsDataPipeline.curatedMetagenomicData_pipeline:pipeline',
-            'download_files = curatedMetagenomicsDataPipeline.utils:download_file'
+            'cmd_pipeline = curatedMetagenomicsDataPipeline.curatedMetagenomicData_pipeline:pipeline',
+            'cmd_utilities_cli = curatedMetagenomicsDataPipeline.cli:cmd_cli'
         ]
     },
 )
