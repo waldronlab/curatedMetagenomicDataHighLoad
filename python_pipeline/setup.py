@@ -1,7 +1,7 @@
 import setuptools
 
 setuptools.setup(
-    name='curatedmetagenomicsdatapipeline',
+    name='curatedmetagenomicspipeline',
     version='0.0.1',
     author='Francesco Beghini',
     author_email='francesco.beghini@unitn.it',
@@ -13,4 +13,6 @@ setuptools.setup(
             'cmd_utilities_cli = curatedMetagenomicsDataPipeline.cli:cmd_cli'
         ]
     },
+    long_description_content_type='text/markdown',
+    long_description=open('README.md').read()
 )
