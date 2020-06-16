@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name='curatedmetagenomicspipeline',
-    version='0.0.1',
+    version='0.0.2',
     author='Francesco Beghini',
     author_email='francesco.beghini@unitn.it',
     url='https://github.com/waldronlab/curatedmetagenomics',

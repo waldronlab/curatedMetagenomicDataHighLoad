@@ -9,7 +9,7 @@ from .utils import make_folder, download_file, decompress_tar, run_metaphlan, ru
 
 __author__ = 'Francesco Beghini (francesco.beghini@unitn.it)'
 __date__ = 'May 26 2020'
-__version__ = '0.0.1'
+__version__ = '0.0.2'
 
 @click.command()
 @click.version_option(version=__version__)
