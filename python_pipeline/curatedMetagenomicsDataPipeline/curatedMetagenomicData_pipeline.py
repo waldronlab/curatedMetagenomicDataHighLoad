@@ -9,8 +9,10 @@ from .utils import make_folder, download_file, decompress_tar, run_metaphlan, ru
 
 __author__ = 'Francesco Beghini (francesco.beghini@unitn.it)'
 __date__ = 'May 26 2020'
+__version__ = '0.0.1'
 
 @click.command()
+@click.version_option(version=__version__)
 @click.argument('sample_name')
 @click.argument('runs')
 @click.option('--ncores', envvar='ncores', default="2")
