@@ -10,15 +10,23 @@ See the [wiki](https://github.com/waldronlab/curatedmetagenomics/wiki/Environmen
 
 # What is here
 
-* a MetaPhlan3 + HUMAnN3 + StrainPhlAn + sratoolkit Docker image.  (see [docker directory](https://github.com/waldronlab/curatedmetagenomics/tree/master/docker/curatedMetagenomics) for Dockerfile and link to Dockerhub). 
-    - Instructions to run are kept in a [wiki](https://github.com/waldronlab/curatedmetagenomics/wiki/Environment-variables-and-invocation). 
-    - There is still work to be done turning bash scripts into a Python package with improved documentation, arguments, and versioning.
+## MetaPhlan3 + HUMAnN3 + StrainPhlAn + sratoolkit Docker+Singularity images
 
 | DockerHub    | SingularityHub      |
 |-	       |-		     |
 | [![](https://images.microbadger.com/badges/version/waldronlab/curatedmetagenomics.svg)](https://hub.docker.com/repository/docker/waldronlab/curatedmetagenomics)		| [![https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg](https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg)](https://singularity-hub.org/collections/4365) |
 
-* a sratoolkit-only docker image (see [docker directory](https://github.com/waldronlab/curatedmetagenomics/tree/master/docker/sratoolkit), but this is also included in the above all-in-one image. 
+(see [docker directory](https://github.com/waldronlab/curatedmetagenomics/tree/master/docker/curatedMetagenomics) for Dockerfile and link to Dockerhub). 
+    - Instructions to run are kept in a [wiki](https://github.com/waldronlab/curatedmetagenomics/wiki/Environment-variables-and-invocation). 
+    - There is still work to be done turning bash scripts into a Python package with improved documentation, arguments, and versioning.
+
+## sratoolkit-only Docker+Singularity images 
+
+| DockerHub 	| SingularityHub 	|
+|-	|-	|
+| [![](https://images.microbadger.com/badges/version/waldronlab/sratoolkit.svg)](https://hub.docker.com/repository/docker/waldronlab/sratoolkit)         	| [![https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg](https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg)](https://singularity-hub.org/collections/4458) |
+
+(see [docker directory](https://github.com/waldronlab/curatedmetagenomics/tree/master/docker/sratoolkit), but this is also included in the above all-in-one image. 
 
 * a PyPi project for the curatedmetagenomics pipeline
 
