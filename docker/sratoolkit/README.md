@@ -1,7 +1,6 @@
 | DockerHub 	| SingularityHub 	|
 |-	|-	|
-| [![](https://images.microbadger.com/badges/version/waldronlab/sratoolkit.svg)](https://hub.docker.com/repository/docker/waldronlab/sratoolkit)         	| [![https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg](https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg)](https://singularity-hub.org/collections/4458)
- |
+| [![](https://images.microbadger.com/badges/version/waldronlab/sratoolkit.svg)](https://hub.docker.com/repository/docker/waldronlab/sratoolkit)         	| [![https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg](https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg)](https://singularity-hub.org/collections/4458) |
 
 
 # An example
