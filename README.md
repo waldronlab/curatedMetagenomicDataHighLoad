@@ -28,6 +28,6 @@ See the [wiki](https://github.com/waldronlab/curatedmetagenomics/wiki/Environmen
 
 (see [docker directory](https://github.com/waldronlab/curatedmetagenomics/tree/master/docker/sratoolkit), but this is also included in the above all-in-one image. 
 
-* a PyPi project for the curatedmetagenomics pipeline
+## a PyPi project for the curatedmetagenomics pipeline
 
 See the [python_pipeline](https://github.com/waldronlab/curatedmetagenomics/tree/master/python_pipeline) directory
