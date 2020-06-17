@@ -14,4 +14,12 @@ See the [wiki](https://github.com/waldronlab/curatedmetagenomics/wiki/Environmen
     - Instructions to run are kept in a [wiki](https://github.com/waldronlab/curatedmetagenomics/wiki/Environment-variables-and-invocation). 
     - There is still work to be done turning bash scripts into a Python package with improved documentation, arguments, and versioning.
 
+| DockerHub    | SingularityHub      |
+|-	       |-		     |
+| [![](https://images.microbadger.com/badges/version/waldronlab/curatedmetagenomics.svg)](https://hub.docker.com/repository/docker/waldronlab/curatedmetagenomics)		| [![https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg](https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg)](https://singularity-hub.org/collections/4365) |
+
 * a sratoolkit-only docker image (see [docker directory](https://github.com/waldronlab/curatedmetagenomics/tree/master/docker/sratoolkit), but this is also included in the above all-in-one image. 
+
+* a PyPi project for the curatedmetagenomics pipeline
+
+See the [python_pipeline](https://github.com/waldronlab/curatedmetagenomics/tree/master/python_pipeline) directory
