@@ -1,0 +1,6 @@
+Bootstrap:docker
+From:waldronlab/curatedmetagenomics:latest
+
+%environment
+    export LANGUAGE=en_us
+    export LC_ALL=C
