@@ -31,3 +31,5 @@ The command above download the specified SRR run for sample `MV_FEI4_t1Q14` from
 - Strain-level profiling with StrainPhlAn 3.0 (only the consensus_marker step is done)
 - Functional potential profiling with HUMAnN 3.0
   - Pathways and gene families abundances are normalized using species' relative abundances and CPM
+
+For the full list of options and commands, please run `cmd_utilities_cli --help` and/or `cmd_utilities_cli COMMAND --help`
