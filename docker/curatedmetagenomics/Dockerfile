@@ -17,7 +17,8 @@ RUN conda config --add channels conda-forge
 
 ## install metaphlan3, humann3, and the curatedMetagenomics pipeline
 RUN conda update conda
-RUN conda install -c bioconda metaphlan=3 
+RUN conda install -c bioconda metaphlan=3
+RUN conda update metaphlan
 RUN conda install -c biobakery humann 
 RUN pip install curatedmetagenomicspipeline
 
