@@ -23,23 +23,23 @@ def download_file(url, file_path):
     _download_file(url, file_path)
 
 @download.command('metaphlan_database', help='Download and install the latest available MetaPhlAn database')
-@click.argument('metaphlandb', envvar='metaphlandb', type=click.Path())
-def download_metaphlan_databases(metaphlandb):
-    _download_metaphlan_databases(metaphlandb)
+@click.argument('db_path', envvar='db_path', type=click.Path())
+def download_metaphlan_databases(db_path):
+    _download_metaphlan_databases(db_path)
 
 @download.command('chocophlan', help='Download annotated CHOCOPhlAn pangenomes')
-@click.argument('chocophlandir', envvar='chocophlandir')
+@click.argument('db_path', envvar='db_path')
 @click.argument('chocophlanname', envvar='chocophlanname')
 @click.argument('chocophlanurl', envvar='chocophlanurl')
-def download_chocophlan(chocophlandir, chocophlanname, chocophlanurl):
-    _download_chocophlan(chocophlandir, chocophlanname, chocophlanurl)
+def download_chocophlan(db_path, chocophlanname, chocophlanurl):
+    _download_chocophlan(db_path, chocophlanname, chocophlanurl)
 
 @download.command('uniref', help='Download UniRef database')
-@click.argument('unirefdir', envvar='unirefdir')
+@click.argument('db_path', envvar='db_path')
 @click.argument('unirefname', envvar='unirefname')
 @click.argument('unirefurl', envvar='unirefurl')
-def download_uniref(unirefdir, unirefname, unirefurl):
-    _download_uniref(unirefdir, unirefname, unirefurl)
+def download_uniref(db_path, unirefname, unirefurl):
+    _download_uniref(db_path, unirefname, unirefurl)
 
 @cmd_cli.group(help="Commands for running profiling tools")
 def run():
@@ -47,11 +47,11 @@ def run():
 
 @run.command('metaphlan', help='Run MetaPhlAn on a sample')
 @click.argument('sample_name')
-@click.argument('metaphlandb', envvar='metaphlandb')
+@click.argument('db_path', envvar='db_path')
 @click.argument('output_path', envvar='output_path')
 @click.argument('ncores', envvar='ncores', default=2, type=click.INT)
-def run_metaphlan(sample_name, metaphlandb, output_path, ncores):
-    _run_metaphlan(sample_name, metaphlandb, output_path, ncores)
+def run_metaphlan(sample_name, db_path, output_path, ncores):
+    _run_metaphlan(sample_name, db_path, output_path, ncores)
 
 @run.command('strainphlan', help='Run StrainPhlAn on a sample')
 @click.argument('sample_name')
@@ -60,15 +60,13 @@ def run_metaphlan(sample_name, metaphlandb, output_path, ncores):
 def run_strainphlan(sample_name, output_path, ncores):
     _run_strainphlan(sample_name, output_path, ncores)
 
-@run.command('humann', help='Run HUMAnN on a sample')
+@run.command('humann', help='Run HUMAnN on a FASTQ sample starting from a pre-computed MetaPhlAn profile')
 @click.argument('sample_name')
-@click.argument('chocophlandir', envvar='chocophlandir')
-@click.argument('unirefdir', envvar='unirefdir')
-@click.argument('metaphlandb', envvar='metaphlandb')
+@click.argument('db_path', envvar='db_path')
 @click.argument('output_path', envvar='output_path')
 @click.argument('ncores', envvar='ncores', default=2, type=click.INT)
-def run_humann(sample_name, chocophlandir, unirefdir, metaphlandb, output_path, ncores):
-    _run_humann(sample_name, chocophlandir, unirefdir, metaphlandb, output_path, ncores)
+def run_humann(sample_name, db_path, output_path, ncores):
+    _run_humann(sample_name, db_path, output_path, ncores)
 
 if __name__ == '__main__':
     cmd_cli()
