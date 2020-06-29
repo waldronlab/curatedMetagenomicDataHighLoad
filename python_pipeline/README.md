@@ -15,13 +15,13 @@ pip install .
 ## Usage
 
 ```
-cmd_pipeline --demo TEST_SAMPLE ERR262957
+cmd_pipeline --demo TEST_SAMPLE ERR262957 /output
 ```
 The `--demo` argument causes use of a small demo FASTQ file and mini ChocoPhlAn, and UniRef databases (although ERR262957 is still downloaded to test `fasterq-dump`
 
 
 ```
-cmd_pipeline MV_FEI4_t1Q14 "SRR4052038" 
+cmd_pipeline MV_FEI4_t1Q14 "SRR4052038" /output
 ```
 
 The command above download the specified SRR run for sample `MV_FEI4_t1Q14` from the AsnicarF_2017 dataset. Reads are then processed for:
