@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-import click
 import argparse as ap
+import click
 import os
 import sys
 import shutil
-from urllib.request import urlretrieve
 import subprocess as sb
 import tarfile
 import time
+from urllib.request import urlretrieve
 
 def make_folder(path):
     if not os.path.isdir(path):
@@ -71,8 +71,15 @@ def decompress_tar(tar_file, destination):
     except EnvironmentError:
         sys.stderr.write("Warning: Unable to extract {}.\n".format(tar_file))
 
-def download_metaphlan_databases(metaphlandb):
-    metaphlandb = os.path.expandvars(metaphlandb)
+def download_all(db_path, chocophlanname, chocophlanurl, unirefname, unirefurl):
+    download_metaphlan_databases(db_path)
+    download_chocophlan(db_path, chocophlanname, chocophlanurl)
+    download_uniref(db_path, unirefname, unirefurl)
+
+def download_metaphlan_databases(db_path):
+    metaphlandb = os.path.expandvars(os.path.join(db_path, 'metaphlan_db'))
+    make_folder(metaphlandb)
+
     sb.check_call(
     ['metaphlan',
     '--install', 
@@ -80,8 +87,8 @@ def download_metaphlan_databases(metaphlandb):
     '--bowtie2db', metaphlandb
     ])
 
-def download_chocophlan(chocophlandir, chocophlanname, chocophlanurl):
-    chocophlandir = os.path.expandvars(chocophlandir)
+def download_chocophlan(db_path, chocophlanname, chocophlanurl):
+    chocophlandir = os.path.expandvars(os.path.join(db_path, 'humann', 'chocophlan'))
     chocophlanurl = os.path.expandvars(chocophlanurl)
     make_folder(chocophlandir)
     
@@ -92,8 +99,8 @@ def download_chocophlan(chocophlandir, chocophlanname, chocophlanurl):
     decompress_tar(os.path.join(chocophlandir, chocophlanname), chocophlandir)
     os.unlink(os.path.join(chocophlandir, chocophlanname))
 
-def download_uniref(unirefdir, unirefname, unirefurl):
-    unirefdir = os.path.expandvars(unirefdir)
+def download_uniref(db_path, unirefname, unirefurl):
+    unirefdir = os.path.expandvars(os.path.join(db_path, 'humann', 'uniref'))
     unirefurl = os.path.expandvars(unirefurl)
     make_folder(unirefdir)
 
@@ -104,8 +111,8 @@ def download_uniref(unirefdir, unirefname, unirefurl):
     decompress_tar(os.path.join(unirefdir, unirefname), unirefdir)
     os.unlink(os.path.join(unirefdir, unirefname))
 
-def run_metaphlan(sample_name, metaphlandb, output_path, ncores):
-    metaphlandb = os.path.expandvars(metaphlandb)
+def run_metaphlan(sample_name, db_path, output_path, ncores):
+    metaphlandb =  os.path.expandvars(os.path.join(db_path, 'metaphlan_db'))
     output_path = os.path.expandvars(output_path)
     for d in ['metaphlan', 'marker_abundance', 'marker_presence', 'metaphlan_bugs_list']:
         make_folder(os.path.join(output_path, d))
@@ -154,11 +161,11 @@ def run_strainphlan(sample_name, output_path, ncores):
     except sb.CalledProcessError as e:
         sys.exit(1)
 
-def run_humann(sample_name, chocophlandir, unirefdir, metaphlandb, output_path, ncores):
+def run_humann(sample_name, db_path, output_path, ncores):
     output_path = os.path.expandvars(output_path)
-    metaphlandb = os.path.expandvars(metaphlandb)
-    chocophlandir = os.path.expandvars(chocophlandir)
-    unirefdir = os.path.expandvars(unirefdir)
+    metaphlandb =  os.path.expandvars(os.path.join(db_path, 'metaphlan_db'))
+    chocophlandir = os.path.expandvars(os.path.join(db_path, 'humann', 'chocophlan'))
+    unirefdir = os.path.expandvars(os.path.join(db_path, 'humann', 'uniref'))
     
     for d in ['humann','genefamilies','genefamilies_relab','genefamilies_cpm','pathabundance','pathabundance_relab','pathcoverage','pathabundance_cpm']:
         make_folder(os.path.join(output_path, d))
