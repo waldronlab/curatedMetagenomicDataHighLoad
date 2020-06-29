@@ -5,7 +5,7 @@ import glob
 import sys
 import subprocess as sb
 import shutil
-from .utils import make_folder, download_file, decompress_tar, run_metaphlan, run_humann, run_strainphlan
+from .utils import make_folder, download_file, download_all, decompress_tar, run_metaphlan, run_humann, run_strainphlan
 
 __author__ = 'Francesco Beghini (francesco.beghini@unitn.it)'
 __date__ = 'May 26 2020'
@@ -17,8 +17,9 @@ __version__ = '0.0.2'
 @click.argument('runs')
 @click.option('--ncores', envvar='ncores', default="2")
 @click.option('--demo', is_flag=True)
-@click.argument('output_path', envvar='OUTPUT_PATH', type=click.Path())
-def pipeline(sample_name, runs, ncores, output_path, demo):
+@click.argument('output_path')
+@click.argument('db_path', required=False)
+def pipeline(sample_name, runs, ncores, db_path, output_path, demo):
     """
         Dump from SRA the colon-separated list of RUNS into a FASTQ file named after
         SAMPLE_NAME and profile it with MetaPhlAn, StrainPhlAn, and HUMAnN
@@ -34,23 +35,17 @@ def pipeline(sample_name, runs, ncores, output_path, demo):
     if hnn_dir is None:
         sys.exit('hnn_dir env environment variable must be set. Exiting.\n')
 
-    metaphlandb = os.path.expandvars(os.environ.get('metaphlandb'))
-    if metaphlandb is None:
-        sys.exit('metaphlandb env environment variable must be set. Exiting.\n')
-        
-    chocophlandir = os.path.expandvars(os.environ.get('chocophlandir'))
-    if chocophlandir is None:
-        sys.exit('chocophlandir env environment variable must be set. Exiting.\n')
-    else:
-        make_folder(chocophlandir)
+    if db_path is None and not demo:
+        sys.stdout.write('db_path variable is not set, a clean run will be performed.\nDownloading all the databases...\n')
+        db_path = os.getcwd()
+        chocophlanname = os.path.expandvars(os.getenv('chocophlanname'))
+        chocophlanurl = os.path.expandvars(os.getenv('chocophlanurl'))
+        unirefname = os.path.expandvars(os.getenv('unirefname'))
+        unirefurl = os.path.expandvars(os.getenv('unirefurl'))
+        download_all(db_path, chocophlanname, chocophlanurl, unirefname, unirefurl)
+        sys.stdout.write('Done.\n')
 
-    unirefdir = os.path.expandvars(os.environ.get('unirefdir'))
-    if unirefdir is None:
-        sys.exit('unirefdir env environment variable must be set. Exiting.')
-    else:
-        make_folder(unirefdir)
-
-    if demo:
+    if demo and db_path:
         sample_name = 'DEMO'
         click.echo('Downloading DEMO databases')
         DEMO_unirefname="uniref90_DEMO_diamond_v201901.tar.gz"
@@ -59,12 +54,15 @@ def pipeline(sample_name, runs, ncores, output_path, demo):
         DEMO_chocophlanurl="https://www.dropbox.com/s/66wgnzw0eo1z142/DEMO_chocophlan.v296_201901.tar.gz?dl=1"
 
         download_file(DEMO_unirefurl, DEMO_unirefname)
-        decompress_tar(DEMO_unirefname, unirefdir)
+        decompress_tar(DEMO_unirefname, os.path.expandvars(os.path.join(db_path, 'humann', 'uniref')))
         os.unlink(DEMO_unirefname)
 
         download_file(DEMO_chocophlanurl, DEMO_chocophlanname)
-        decompress_tar(DEMO_chocophlanname, chocophlandir)
+        decompress_tar(DEMO_chocophlanname, os.path.expandvars(os.path.join(db_path, 'humann', 'chocophlan')))
         os.unlink(DEMO_chocophlanname)
+    else:
+        sys.stdout.write('db_path variable must be set. Exiting.\n')
+
     try:
         sb.check_call(['fasterq-dump', '-h'], stderr=sb.DEVNULL, stdout=sb.DEVNULL)
     except:
@@ -97,7 +95,7 @@ def pipeline(sample_name, runs, ncores, output_path, demo):
 
     if os.path.isfile(os.path.join(output_path, 'reads', '{}.fastq'.format(sample_name))):
         click.echo('Running metaphlan')
-        run_metaphlan(sample_name, metaphlandb, output_path, ncores)
+        run_metaphlan(sample_name, db_path, output_path, ncores)
     else:
         sys.exit('MetaPhlAn execution has failed. Cannot find the input metagenome. Exiting.')
 
@@ -109,7 +107,7 @@ def pipeline(sample_name, runs, ncores, output_path, demo):
 
     if os.path.isfile(os.path.join(output_path, 'metaphlan_bugs_list', '{}.tsv'.format(sample_name))):
         click.echo('Running humann')
-        run_humann(sample_name, chocophlandir, unirefdir, metaphlandb, output_path, ncores)
+        run_humann(sample_name, db_path, output_path, ncores)
     else:
         sys.exit('MetaPhlAn execution has failed, the output profile file is missing. HUMAnN can not be executed. Exiting.')
 
