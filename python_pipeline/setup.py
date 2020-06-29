@@ -6,6 +6,7 @@ setuptools.setup(
     author='Francesco Beghini',
     author_email='francesco.beghini@unitn.it',
     url='https://github.com/waldronlab/curatedmetagenomics',
+    install_requires = ['click'],
     packages=setuptools.find_namespace_packages(),
     entry_points={
         'console_scripts': [
