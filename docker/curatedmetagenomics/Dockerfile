@@ -32,10 +32,6 @@ RUN curl -O https://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.10.5/setup-apt.sh
 RUN /bin/bash setup-apt.sh
 ENV PATH=/usr/local/ncbi/sra-tools/bin:$PATH
 
-# ## pipeline run function
-# COPY curatedMetagenomicData_pipeline.sh download_metaphlandb.sh download_chocophlan.sh download_uniref.sh run_humann.sh run_metaphlan.sh run_strainphlan.sh /usr/local/bin/
-# RUN chmod a+rx /usr/local/bin/*.sh
-
 ## interactive user settings workaround
 COPY usersettings /root/.ncbi/user-settings.mkfg
 
