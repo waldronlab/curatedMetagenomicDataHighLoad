@@ -27,8 +27,6 @@ def pipeline(sample_name, runs, ncores, db_path, output_path, demo):
 
     runs = runs.split(';')
     ncores = int(ncores)
-    output_path = os.environ.get('OUTPUT_PATH', os.path.dirname(__file__))
-    output_path = os.path.expandvars(output_path)
     sys.stdout.write('Output folder is ' + output_path + '\n')
 
     hnn_dir =  os.path.expandvars(os.environ.get('hnn_dir'))
