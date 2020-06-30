@@ -10,6 +10,7 @@ RUN apt-get install -y wget
 ## Install conda
 RUN curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
 RUN sh Miniconda3-latest-Linux-x86_64.sh -b -p /usr/local/miniconda3
+RUN rm Miniconda3-latest-Linux-x86_64.sh
 ENV PATH=/usr/local/miniconda3/bin:$PATH
 RUN conda config --add channels defaults
 RUN conda config --add channels bioconda
